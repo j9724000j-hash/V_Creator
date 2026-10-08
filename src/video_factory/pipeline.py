@@ -16,6 +16,7 @@ from .planner import plan
 from .spec import Spec, load
 from .tools import doctor
 from .util import ROOT, ProductionError, Runner, digest, ffbase, file_hash, probe, safe_path, write_json
+from .transitions import TRANSITIONS, overlap_seconds
 from .validation import validate
 
 BACKENDS={'ffmpeg':FFmpegBackend,'remotion':RemotionBackend,'moviepy':MoviePyBackend,'manim':ManimBackend}
@@ -78,7 +79,10 @@ def _render(project:Path, output:Path, source:Spec, spec:Spec) -> Path:
     implementation=digest({str(p.relative_to(ROOT)):file_hash(p) for folder in ('src','remotion','manim','brand')
                            for p in (ROOT/folder).rglob('*') if p.is_file() and '__pycache__' not in str(p)})
     scenes=[]; asset_records=[]; scene_records=[]; warnings=[]
-    for scene,decision in zip(spec.scenes,production['scenes']):
+    xfade_overlap=[overlap_seconds(scene.transition,scene.duration) for scene in spec.scenes]
+    # To keep total duration exact, render outgoing overlap tails except on the last scene.
+    scene_pad=[(xfade_overlap[i+1] if i+1<len(spec.scenes) and xfade_overlap[i+1]>0 else 0.0) for i in range(len(spec.scenes))]
+    for i,(scene,decision,overlap,pad) in enumerate(zip(spec.scenes,production['scenes'],xfade_overlap,scene_pad)):
         asset=make_asset(scene,project,work,spec.video.width,spec.video.height)
         asset_records.append(asset)
         tool=decision['selected_tool']
@@ -95,8 +99,10 @@ def _render(project:Path, output:Path, source:Spec, spec:Spec) -> Path:
                 pass
         if not reused:
             temporary=folder/'partial.mp4'
+            scene_frames=max(1,round((scene.duration+pad)*spec.video.fps))
+            scene_seconds=scene_frames/spec.video.fps
             context=Context(scene,spec.video.width,spec.video.height,spec.video.fps,
-                round(scene.duration*spec.video.fps),spec.render.threads,scene.quality or spec.render.preset,
+                scene_frames,spec.render.threads,scene.quality or spec.render.preset,
                 Path(asset['path']),temporary,runner)
             errors=[]
             for attempt in range(2):
@@ -112,7 +118,7 @@ def _render(project:Path, output:Path, source:Spec, spec:Spec) -> Path:
                 tool='ffmpeg'; FFmpegBackend().render(context)
             info=probe(temporary)
             video=next(s for s in info['streams'] if s['codec_type']=='video')
-            if (video['width'],video['height'])!=(spec.video.width,spec.video.height) or abs(float(info['format']['duration'])-scene.duration)>.15:
+            if (video['width'],video['height'])!=(spec.video.width,spec.video.height) or abs(float(info['format']['duration'])-scene_seconds)>.15:
                 raise ProductionError(f'{scene.id}: backend violated scene dimensions/duration contract')
             temporary.replace(path)
             write_json(metadata,{'sha256':file_hash(path),'tool':tool,'errors':errors})
@@ -133,10 +139,33 @@ def _render(project:Path, output:Path, source:Spec, spec:Spec) -> Path:
     for i,path in enumerate(scenes):
         target=work/f'scene_{i:04}.mp4'
         shutil.copyfile(path,target)
-    concat=work/'concat.txt'
-    concat.write_text(''.join(f"file 'scene_{i:04}.mp4'\n" for i in range(len(scenes))))
     assembled=work/'assembled.mp4'
-    runner.run(ffbase()+['-f','concat','-safe','1','-i',str(concat),'-c','copy',str(assembled)])
+    advanced=any(TRANSITIONS.get(scene.transition) not in (None,0,12,13) for scene in spec.scenes)
+    if advanced and len(scenes)>1:
+        inputs=[]; filters=[]; last='0:v'
+        scene_durations=[]
+        for i,scene in enumerate(spec.scenes):
+            scene_frames=max(1,round((scene.duration+scene_pad[i])*spec.video.fps))
+            scene_durations.append(scene_frames/spec.video.fps)
+        out_duration = scene_durations[0]
+        for i in range(len(scenes)):
+            inputs += ['-i', str(work/f'scene_{i:04}.mp4')]
+            if i>0:
+                overlap=xfade_overlap[i]
+                tid=TRANSITIONS[spec.scenes[i].transition]
+                label=f'xf{i}'
+                offset=max(0.01,out_duration-overlap)
+                filters.append(f'[{last}][{i}:v]xfade=transition={tid}:duration={overlap}:offset={offset:.3f}[{label}]')
+                last=label
+                out_duration += scene_durations[i] - overlap
+        graph=';'.join(filters)
+        runner.run(ffbase()+inputs+['-filter_complex',graph,'-map',f'[{last}]','-an',
+            '-c:v','libx264','-threads',str(spec.render.threads),'-preset','veryfast' if spec.render.preset in ('draft','preview') else 'medium',
+            '-crf','20' if spec.render.preset=='high' else '23','-pix_fmt','yuv420p',str(assembled)])
+    else:
+        concat=work/'concat.txt'
+        concat.write_text(''.join(f"file 'scene_{i:04}.mp4'\n" for i in range(len(scenes))))
+        runner.run(ffbase()+['-f','concat','-safe','1','-i',str(concat),'-c','copy',str(assembled)])
     args=ffbase()+['-i',str(assembled),'-i',str(master)]
     if captions:
         args+=['-i','subtitles.srt']
@@ -144,7 +173,7 @@ def _render(project:Path, output:Path, source:Spec, spec:Spec) -> Path:
     if captions:
         args+=['-map','2:0','-c:s','mov_text']
     if captions and spec.render.burn_captions:
-        args+=['-vf',"subtitles=subtitles.srt:force_style='FontName=DejaVu Sans,FontSize=17,Outline=2,MarginV=24'",
+        args+=['-vf',"subtitles=subtitles.srt:force_style='FontName=DejaVu Sans,FontSize=18,PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,BorderStyle=1,Outline=2,Shadow=0,MarginL=50,MarginR=50,MarginV=50,Alignment=2'",
                '-c:v','libx264','-threads',str(spec.render.threads),'-preset','veryfast' if spec.render.preset in ('draft','preview') else 'medium',
                '-crf','18' if spec.render.preset=='high' else '22','-pix_fmt','yuv420p']
     else:

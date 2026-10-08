@@ -47,8 +47,8 @@ class Scene(Model):
     assets: list[Asset] = Field(default_factory=list, max_length=1)
     tool: Tool | None = None
     allow_fallback: bool = True
-    transition: Literal['cut', 'fade'] = 'fade'
-    effect: Literal['none','ken_burns','vignette','grain'] = 'ken_burns'
+    transition: Literal['cut', 'fade', 'crossfade', 'dip_to_black', 'dip_to_white', 'slide', 'slide_left', 'slide_right', 'slide_up', 'slide_down', 'wipe', 'wipe_left', 'wipe_right', 'wipe_up', 'wipe_down', 'circle_open', 'circle_close', 'vert_open', 'vert_close', 'horz_open', 'horz_close', 'dissolve', 'pixelize', 'diag_tl', 'diag_tr', 'diag_bl', 'diag_br', 'squeeze_h', 'squeeze_v', 'fade_grays', 'radial', 'smooth_left', 'smooth_right', 'blur_transition', 'light_flash', 'glitch_transition', 'zoom'] = 'dip_to_black'
+    effect: Literal['none','ken_burns','vignette','grain','glow','film_grain','scanlines','chroma_split','color_grade','sharpened','light_leak'] = 'ken_burns'
     audio_cues: list[Cue] = Field(default_factory=list)
     constraints: dict[str, str] = Field(default_factory=dict)
     quality: Literal['draft','preview','standard','high'] | None = None
@@ -60,6 +60,15 @@ class Scene(Model):
             raise ValueError('Custom scene constraints require a dedicated adapter; do not silently ignore them')
         if any(c.time + c.duration > self.duration + .001 for c in self.audio_cues):
             raise ValueError('Audio cue extends past scene boundary')
+        if self.transition in ('slide', 'slide_right'): self.transition = 'slide_right'
+        if self.transition == 'slide_left': self.transition = 'slide_left'
+        if self.transition in ('wipe', 'wipe_right'): self.transition = 'wipe_right'
+        if self.transition in ('wipe_left','wipe_up','wipe_down','circle_open','circle_close','vert_open','vert_close','horz_open','horz_close','dissolve','pixelize','diag_tl','diag_tr','diag_bl','diag_br','squeeze_h','squeeze_v','fade_grays','radial','smooth_left','smooth_right'):
+            pass
+        if self.transition == 'zoom': self.transition = 'zoom'
+        if self.transition == 'blur_transition': self.transition = 'blur'
+        if self.transition == 'light_flash': self.transition = 'dip_to_white'
+        if self.transition == 'glitch_transition': self.transition = 'pixelize'
         return self
 
 class Audio(Model):

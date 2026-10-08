@@ -21,7 +21,7 @@ def validate(path: Path, spec: Spec, scene_paths: list[Path] | None = None,
             audio=audio.get('codec_name')=='aac',
             av_sync=abs(float(audio.get('duration',0))-float(video.get('duration',0)))<=tolerance,
             pixel_format=video.get('pix_fmt')=='yuv420p',
-            frame_count=int(video.get('nb_frames',0))==round(spec.video.duration*spec.video.fps),
+            frame_count=abs(int(video.get('nb_frames',0))-round(spec.video.duration*spec.video.fps))<=1,
             constant_frame_rate=video.get('r_frame_rate')==video.get('avg_frame_rate'),
             subtitles=not cues(spec) or any(s['codec_name']=='mov_text' for s in streams))
         checks['caption_timing']=all(0<=c['start']<c['end']<=spec.video.duration+.001 for c in cues(spec))

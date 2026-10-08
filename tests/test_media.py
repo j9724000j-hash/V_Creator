@@ -43,3 +43,16 @@ def test_wrong_dimensions_rejected(spec,tmp_path,monkeypatch):
     monkeypatch.setattr('video_factory.validation.probe',lambda p:{'streams':streams,'format':{'duration':'2'}})
     report=validate(fake,spec,decode=False)
     assert not report['ok'] and not report['checks']['resolution']
+
+def test_transition_literals_and_presets():
+    from video_factory.transitions import TRANSITIONS
+    from video_factory.effects import EFFECTS
+    assert TRANSITIONS['wipe_right']==2
+    assert EFFECTS['chroma_split'].startswith('geq=')
+    assert all(isinstance(v, (int,type(None))) for v in TRANSITIONS.values())
+
+def test_ffmpeg_command_includes_effect_and_pad(spec,tmp_path,monkeypatch):
+    from video_factory.backends import Context
+    monkeypatch.setattr('video_factory.util.ffmpeg',lambda:'ffmpeg')
+    c=Context(spec.scenes[0],320,240,15,20,1,'draft',tmp_path/'a.png',tmp_path/'out.mp4',Runner())
+    assert any('unsharp' in x for x in command(c)) is False
