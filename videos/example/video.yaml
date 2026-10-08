@@ -1,0 +1,54 @@
+video:
+  id: black-hole
+  title: How a Black Hole Works
+  duration: 30
+  width: 1080
+  height: 1920
+  fps: 30
+  style: {tone: cinematic, color_mood: dark_space}
+brief: "30-second educational short. Conceptual diagrams, calm pacing and original procedural audio."
+assumptions:
+  - "Diagrams illustrate concepts, not ray-traced general relativity."
+  - "If local TTS is missing this demo explicitly uses captions without narration."
+audio:
+  narration: true
+  missing_tts: skip
+  music: true
+  sound_effects: true
+  bpm: 84
+  key: A
+  mood: cinematic
+planner:
+  enable: [ffmpeg]
+render: {preset: standard, threads: 2, burn_captions: true}
+scenes:
+  - id: intro
+    duration: 6
+    type: title
+    title: Beyond the point of no return
+    intent: BLACK HOLES
+    narration: "A black hole is a region where gravity is so strong that light cannot escape."
+    visual_description: "An introduction to the boundary of escape."
+    audio_cues: [{time: 0.2, effect: whoosh, duration: 1, gain: 0.18}]
+  - id: horizon
+    duration: 8
+    type: scientific_animation
+    title: The event horizon
+    intent: Boundary of escape
+    narration: "The event horizon marks that boundary. It is not a solid surface you could stand on."
+    visual_description: "A conceptual boundary, not a physical shell."
+    audio_cues: [{time: 0.2, effect: impact, duration: 0.7, gain: 0.15}]
+  - id: accretion
+    duration: 8
+    type: explanatory_diagram
+    title: Why the surroundings glow
+    narration: "Gas orbiting nearby can heat up and shine. The light comes from outside the black hole."
+    visual_description: "Hot matter outside the horizon can radiate light."
+    audio_cues: [{time: 0.1, effect: sweep, duration: 1.4, gain: 0.12}]
+  - id: takeaway
+    duration: 8
+    type: cinematic_visual
+    title: Invisible does not mean undetectable
+    narration: "Astronomers study nearby stars, glowing gas, and gravitational waves to learn about these invisible objects."
+    visual_description: "We infer black holes through their effects."
+    audio_cues: [{time: 0.2, effect: notification, duration: 0.5, gain: 0.12}]

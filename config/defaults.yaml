@@ -1,0 +1,3 @@
+# Reference defaults; authoritative validated defaults live in spec.py.
+render: {preset: standard, threads: 2, burn_captions: true, keep_intermediates: true}
+audio: {target_loudness: -16, music_gain: 0.18, bpm: 84, key: A}

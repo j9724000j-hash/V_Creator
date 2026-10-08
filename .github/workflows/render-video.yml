@@ -1,0 +1,83 @@
+name: Render video
+on:
+  workflow_dispatch:
+    inputs:
+      project:
+        description: Project directory (inside repository)
+        default: videos/example
+        required: true
+        type: string
+      resolution:
+        description: WIDTHxHEIGHT or spec
+        default: spec
+        type: string
+      preset:
+        description: CPU quality/performance preset
+        default: draft
+        type: choice
+        options: [draft, preview, standard, high]
+      keep_intermediates:
+        description: Retain working assets in artifact
+        default: false
+        type: boolean
+permissions:
+  contents: read
+concurrency:
+  group: render-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  render:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      PROJECT: ${{ inputs.project }}
+      RESOLUTION: ${{ inputs.resolution }}
+      PRESET: ${{ inputs.preset }}
+      KEEP: ${{ inputs.keep_intermediates }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+      - name: Validate input path before cache/artifact use
+        run: |
+          python - <<'PY'
+          import os, pathlib, re
+          root=pathlib.Path.cwd()
+          value=os.environ['PROJECT']
+          if not re.fullmatch(r'videos/[A-Za-z0-9_-]+',value):
+              raise SystemExit('Project must be videos/<safe-project-id>')
+          path=(root/value).resolve()
+          if not path.is_relative_to(root) or not (path/'video.yaml').is_file():
+              raise SystemExit('Project not found or unsafe path')
+          PY
+      - name: Install CPU tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg imagemagick espeak-ng fonts-dejavu-core
+          python -m pip install -r requirements.txt
+          python -m pip install -e .
+      - uses: actions/cache@v4
+        with:
+          path: ${{ inputs.project }}/.cache/scenes
+          key: scenes-${{ runner.os }}-${{ inputs.project }}-${{ inputs.preset }}-${{ github.sha }}
+          restore-keys: |
+            scenes-${{ runner.os }}-${{ inputs.project }}-${{ inputs.preset }}-
+      - run: video-factory doctor
+      - name: Render and validate
+        run: |
+          KEEP_FLAG=--no-keep-intermediates
+          if [[ "$KEEP" == true ]]; then KEEP_FLAG=--keep-intermediates; fi
+          video-factory plan "$PROJECT"
+          video-factory render "$PROJECT" --preset "$PRESET" --resolution "$RESOLUTION" "$KEEP_FLAG"
+          video-factory validate "$PROJECT"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: video-${{ github.run_id }}
+          path: |
+            ${{ inputs.project }}/output/
+            ${{ inputs.project }}/work/
+          if-no-files-found: warn
+          retention-days: 7
