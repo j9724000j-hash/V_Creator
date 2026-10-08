@@ -1,0 +1,221 @@
+ffmpeg:
+  category: media
+  command: ffmpeg
+  version_args:
+  - -version
+  required: true
+  cpu: true
+  license: GPL/LGPL build-dependent
+  install: apt-get install ffmpeg
+  scene_types:
+  - image
+  - cinematic_visual
+  fallback: null
+  status: core
+  docs: https://github.com/FFmpeg/FFmpeg
+ffprobe:
+  category: validation
+  command: ffprobe
+  version_args:
+  - -version
+  required: true
+  cpu: true
+  license: GPL/LGPL build-dependent
+  install: apt-get install ffmpeg
+  scene_types: []
+  fallback: null
+  status: core
+  docs: https://github.com/FFmpeg/FFmpeg
+imagemagick:
+  category: images
+  command: convert
+  version_args:
+  - -version
+  required: false
+  cpu: true
+  license: ImageMagick License
+  install: apt-get install imagemagick
+  scene_types: []
+  fallback: ffmpeg
+  status: optional
+  docs: https://github.com/ImageMagick/ImageMagick
+remotion:
+  category: motion
+  command: remotion
+  version_args:
+  - versions
+  required: false
+  cpu: true
+  license: Remotion source-available; eligibility restrictions
+  install: npm ci; set VF_BROWSER to installed Chromium
+  scene_types:
+  - title
+  - text
+  - chart
+  - explanatory_diagram
+  fallback: ffmpeg
+  status: optional/licensed
+  docs: https://github.com/remotion-dev/remotion
+espeak:
+  category: tts
+  command: espeak-ng
+  version_args:
+  - --version
+  required: false
+  cpu: true
+  license: GPL-3.0
+  install: apt-get install espeak-ng
+  scene_types: []
+  fallback: ffmpeg
+  status: optional
+  docs: https://github.com/espeak-ng/espeak-ng
+moviepy:
+  category: python
+  command: python
+  version_args:
+  - -m
+  - pip
+  - show
+  - moviepy
+  required: false
+  cpu: true
+  license: MIT
+  install: pip install .[moviepy]
+  scene_types:
+  - python_effect
+  fallback: ffmpeg
+  status: optional
+  docs: https://github.com/Zulko/moviepy
+manim:
+  category: science
+  command: manim
+  version_args:
+  - --version
+  required: false
+  cpu: true
+  license: MIT
+  install: pip install .[manim] (Cairo/Pango required)
+  scene_types:
+  - scientific_animation
+  fallback: ffmpeg
+  status: optional
+  docs: https://github.com/ManimCommunity/manim
+motion-canvas:
+  category: motion
+  command: motion-canvas
+  version_args:
+  - --version
+  required: false
+  cpu: true
+  license: MIT
+  install: manual optional project setup
+  scene_types:
+  - explanatory_diagram
+  fallback: ffmpeg
+  status: extension-only
+  docs: https://github.com/motion-canvas/motion-canvas
+godot:
+  category: simulation
+  command: godot
+  version_args:
+  - --version
+  required: false
+  cpu: true
+  license: MIT
+  install: manual Godot 4 install
+  scene_types:
+  - simulation
+  fallback: ffmpeg
+  status: extension-only
+  docs: https://github.com/godotengine/godot
+unity:
+  category: simulation
+  command: Unity
+  version_args:
+  - -version
+  required: false
+  cpu: true
+  license: Proprietary; separate license required
+  install: Unity Hub manual install
+  scene_types:
+  - unity_scene
+  fallback: ffmpeg
+  status: extension-only/licensed
+  docs: https://github.com/Unity-Technologies
+node:
+  category: runtime
+  command: node
+  version_args:
+  - --version
+  required: false
+  cpu: true
+  license: MIT and third-party
+  install: Node.js 22
+  scene_types: []
+  fallback: ffmpeg
+  status: optional
+  docs: https://github.com/nodejs/node
+npm:
+  category: runtime
+  command: npm
+  version_args:
+  - --version
+  required: false
+  cpu: true
+  license: Artistic-2.0
+  install: bundled with Node
+  scene_types: []
+  fallback: ffmpeg
+  status: optional
+  docs: https://github.com/npm/cli
+sox:
+  category: audio
+  command: sox
+  version_args:
+  - --version
+  required: false
+  cpu: true
+  license: GPL/LGPL
+  install: apt-get install sox
+  scene_types: []
+  fallback: ffmpeg
+  status: detected-only
+  docs: https://github.com/chirlu/sox
+fluidsynth:
+  category: midi
+  command: fluidsynth
+  version_args:
+  - --version
+  required: false
+  cpu: true
+  license: LGPL-2.1; SoundFont license separate
+  install: apt-get install fluidsynth
+  scene_types: []
+  fallback: ffmpeg
+  status: detected-only
+  docs: https://github.com/FluidSynth/fluidsynth
+timidity:
+  category: midi
+  command: timidity
+  version_args:
+  - --version
+  required: false
+  cpu: true
+  license: GPL-2.0; SoundFont license separate
+  install: apt-get install timidity
+  scene_types: []
+  fallback: ffmpeg
+  status: detected-only
+  docs: https://github.com/geofft/timidity
+python:
+  category: runtime
+  command: python3
+  version_args: [--version]
+  required: true
+  cpu: true
+  license: PSF-2.0
+  install: Python 3.11 or newer
+  scene_types: []
+  fallback: null
+  status: core
+  docs: https://github.com/python/cpython

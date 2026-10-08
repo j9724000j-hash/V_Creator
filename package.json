@@ -1,0 +1,20 @@
+{
+  "name": "video-factory-motion",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "studio": "remotion studio remotion/src/index.tsx --ipv4 --no-open",
+    "render:scene": "remotion render remotion/src/index.tsx Scene",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.534",
+    "react": "19.1.1",
+    "react-dom": "19.1.1",
+    "remotion": "4.0.534"
+  },
+  "devDependencies": {
+    "@types/react": "19.1.10",
+    "typescript": "5.9.2"
+  }
+}

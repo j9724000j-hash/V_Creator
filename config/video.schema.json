@@ -1,0 +1,538 @@
+{
+  "$defs": {
+    "Asset": {
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "source": {
+          "minLength": 1,
+          "title": "Source",
+          "type": "string"
+        },
+        "license": {
+          "minLength": 1,
+          "title": "License",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "source",
+        "license"
+      ],
+      "title": "Asset",
+      "type": "object"
+    },
+    "Audio": {
+      "additionalProperties": false,
+      "properties": {
+        "narration": {
+          "default": true,
+          "title": "Narration",
+          "type": "boolean"
+        },
+        "music": {
+          "default": true,
+          "title": "Music",
+          "type": "boolean"
+        },
+        "sound_effects": {
+          "default": true,
+          "title": "Sound Effects",
+          "type": "boolean"
+        },
+        "missing_tts": {
+          "default": "error",
+          "enum": [
+            "error",
+            "skip"
+          ],
+          "title": "Missing Tts",
+          "type": "string"
+        },
+        "voice": {
+          "default": "en",
+          "title": "Voice",
+          "type": "string"
+        },
+        "speaking_rate": {
+          "default": 155,
+          "maximum": 350,
+          "minimum": 80,
+          "title": "Speaking Rate",
+          "type": "integer"
+        },
+        "target_loudness": {
+          "default": -16,
+          "maximum": -9,
+          "minimum": -24,
+          "title": "Target Loudness",
+          "type": "number"
+        },
+        "bpm": {
+          "default": 84,
+          "maximum": 200,
+          "minimum": 40,
+          "title": "Bpm",
+          "type": "integer"
+        },
+        "key": {
+          "default": "A",
+          "enum": [
+            "C",
+            "D",
+            "E",
+            "F",
+            "G",
+            "A",
+            "B"
+          ],
+          "title": "Key",
+          "type": "string"
+        },
+        "mood": {
+          "default": "cinematic",
+          "enum": [
+            "cinematic",
+            "calm",
+            "bright"
+          ],
+          "title": "Mood",
+          "type": "string"
+        },
+        "intensity": {
+          "default": 0.5,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Intensity",
+          "type": "number"
+        },
+        "music_gain": {
+          "default": 0.18,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Music Gain",
+          "type": "number"
+        },
+        "reverb": {
+          "default": false,
+          "title": "Reverb",
+          "type": "boolean"
+        }
+      },
+      "title": "Audio",
+      "type": "object"
+    },
+    "Cue": {
+      "additionalProperties": false,
+      "properties": {
+        "time": {
+          "minimum": 0,
+          "title": "Time",
+          "type": "number"
+        },
+        "effect": {
+          "enum": [
+            "whoosh",
+            "hit",
+            "impact",
+            "bass_drop",
+            "click",
+            "pop",
+            "glitch",
+            "notification",
+            "riser",
+            "sweep",
+            "ambience",
+            "wind",
+            "rain",
+            "mechanical",
+            "scifi"
+          ],
+          "title": "Effect",
+          "type": "string"
+        },
+        "duration": {
+          "default": 0.5,
+          "exclusiveMinimum": 0,
+          "maximum": 30,
+          "title": "Duration",
+          "type": "number"
+        },
+        "gain": {
+          "default": 0.2,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Gain",
+          "type": "number"
+        },
+        "pan": {
+          "default": 0,
+          "maximum": 1,
+          "minimum": -1,
+          "title": "Pan",
+          "type": "number"
+        }
+      },
+      "required": [
+        "time",
+        "effect"
+      ],
+      "title": "Cue",
+      "type": "object"
+    },
+    "Planner": {
+      "additionalProperties": false,
+      "properties": {
+        "prefer": {
+          "items": {
+            "enum": [
+              "ffmpeg",
+              "remotion",
+              "moviepy",
+              "manim",
+              "motion-canvas",
+              "godot",
+              "unity"
+            ],
+            "type": "string"
+          },
+          "title": "Prefer",
+          "type": "array"
+        },
+        "enable": {
+          "items": {
+            "enum": [
+              "ffmpeg",
+              "remotion",
+              "moviepy",
+              "manim",
+              "motion-canvas",
+              "godot",
+              "unity"
+            ],
+            "type": "string"
+          },
+          "title": "Enable",
+          "type": "array"
+        }
+      },
+      "title": "Planner",
+      "type": "object"
+    },
+    "Render": {
+      "additionalProperties": false,
+      "properties": {
+        "preset": {
+          "default": "standard",
+          "enum": [
+            "draft",
+            "preview",
+            "standard",
+            "high"
+          ],
+          "title": "Preset",
+          "type": "string"
+        },
+        "threads": {
+          "default": 2,
+          "maximum": 8,
+          "minimum": 1,
+          "title": "Threads",
+          "type": "integer"
+        },
+        "keep_intermediates": {
+          "default": true,
+          "title": "Keep Intermediates",
+          "type": "boolean"
+        },
+        "burn_captions": {
+          "default": true,
+          "title": "Burn Captions",
+          "type": "boolean"
+        }
+      },
+      "title": "Render",
+      "type": "object"
+    },
+    "Scene": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,63}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "duration": {
+          "exclusiveMinimum": 0,
+          "maximum": 600,
+          "title": "Duration",
+          "type": "number"
+        },
+        "type": {
+          "default": "text",
+          "enum": [
+            "title",
+            "text",
+            "chart",
+            "explanatory_diagram",
+            "scientific_animation",
+            "cinematic_visual",
+            "image",
+            "python_effect",
+            "simulation",
+            "unity_scene"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "intent": {
+          "default": "",
+          "title": "Intent",
+          "type": "string"
+        },
+        "visual_description": {
+          "default": "",
+          "title": "Visual Description",
+          "type": "string"
+        },
+        "title": {
+          "default": "",
+          "title": "Title",
+          "type": "string"
+        },
+        "narration": {
+          "default": "",
+          "title": "Narration",
+          "type": "string"
+        },
+        "narration_asset": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Asset"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "captions": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Captions"
+        },
+        "assets": {
+          "items": {
+            "$ref": "#/$defs/Asset"
+          },
+          "maxItems": 1,
+          "title": "Assets",
+          "type": "array"
+        },
+        "tool": {
+          "anyOf": [
+            {
+              "enum": [
+                "ffmpeg",
+                "remotion",
+                "moviepy",
+                "manim",
+                "motion-canvas",
+                "godot",
+                "unity"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tool"
+        },
+        "allow_fallback": {
+          "default": true,
+          "title": "Allow Fallback",
+          "type": "boolean"
+        },
+        "transition": {
+          "default": "fade",
+          "enum": [
+            "cut",
+            "fade"
+          ],
+          "title": "Transition",
+          "type": "string"
+        },
+        "effect": {
+          "default": "ken_burns",
+          "enum": [
+            "none",
+            "ken_burns",
+            "vignette",
+            "grain"
+          ],
+          "title": "Effect",
+          "type": "string"
+        },
+        "audio_cues": {
+          "items": {
+            "$ref": "#/$defs/Cue"
+          },
+          "title": "Audio Cues",
+          "type": "array"
+        },
+        "constraints": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Constraints",
+          "type": "object"
+        },
+        "quality": {
+          "anyOf": [
+            {
+              "enum": [
+                "draft",
+                "preview",
+                "standard",
+                "high"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Quality"
+        },
+        "values": {
+          "items": {
+            "type": "number"
+          },
+          "title": "Values",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "duration"
+      ],
+      "title": "Scene",
+      "type": "object"
+    },
+    "Video": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,63}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "duration": {
+          "exclusiveMinimum": 0,
+          "maximum": 3600,
+          "title": "Duration",
+          "type": "number"
+        },
+        "width": {
+          "default": 1080,
+          "maximum": 3840,
+          "minimum": 160,
+          "multipleOf": 2,
+          "title": "Width",
+          "type": "integer"
+        },
+        "height": {
+          "default": 1920,
+          "maximum": 3840,
+          "minimum": 160,
+          "multipleOf": 2,
+          "title": "Height",
+          "type": "integer"
+        },
+        "fps": {
+          "default": 30,
+          "maximum": 60,
+          "minimum": 1,
+          "title": "Fps",
+          "type": "integer"
+        },
+        "style": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Style",
+          "type": "object"
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "duration"
+      ],
+      "title": "Video",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "video": {
+      "$ref": "#/$defs/Video"
+    },
+    "audio": {
+      "$ref": "#/$defs/Audio"
+    },
+    "render": {
+      "$ref": "#/$defs/Render"
+    },
+    "planner": {
+      "$ref": "#/$defs/Planner"
+    },
+    "scenes": {
+      "items": {
+        "$ref": "#/$defs/Scene"
+      },
+      "maxItems": 200,
+      "minItems": 1,
+      "title": "Scenes",
+      "type": "array"
+    },
+    "brief": {
+      "default": "",
+      "title": "Brief",
+      "type": "string"
+    },
+    "assumptions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Assumptions",
+      "type": "array"
+    }
+  },
+  "required": [
+    "video",
+    "scenes"
+  ],
+  "title": "Spec",
+  "type": "object"
+}
