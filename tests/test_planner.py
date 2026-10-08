@@ -27,3 +27,13 @@ def test_unacceptable_simulation(spec):
 def test_preference(spec):
     spec.planner.prefer=['ffmpeg']
     assert plan(spec,{'ffmpeg':True,'remotion':True})['scenes'][0]['selected_tool']=='ffmpeg'
+
+def test_optional_detection_uses_installed_distribution(monkeypatch):
+    import importlib.metadata
+    from video_factory.tools import available
+    def missing(name):
+        raise importlib.metadata.PackageNotFoundError(name)
+    monkeypatch.setattr(importlib.metadata,'version',missing)
+    # Local manim/ source folder is a namespace, not an installed engine.
+    assert not available('manim')
+    assert not available('moviepy')

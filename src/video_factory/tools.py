@@ -1,4 +1,4 @@
-import importlib.util
+import importlib.metadata
 import os
 import shutil
 from pathlib import Path
@@ -15,9 +15,13 @@ def registry() -> dict:
 
 def available(name: str) -> bool:
     if name == 'remotion':
-        return (ROOT / 'node_modules/.bin/remotion').exists() and bool(os.getenv('VF_BROWSER'))
+        return (ROOT / 'node_modules/.bin/remotion').exists() and bool(shutil.which(os.getenv('VF_BROWSER', '')))
     if name in ('moviepy','manim'):
-        return importlib.util.find_spec(name) is not None
+        try:
+            importlib.metadata.version(name)
+        except importlib.metadata.PackageNotFoundError:
+            return False
+        return name != 'manim' or bool(binary('manim'))
     return bool(binary(registry()[name]['command']))
 
 def doctor() -> dict:
@@ -32,6 +36,7 @@ def doctor() -> dict:
                     version = Runner().run([cmd, *item['version_args']], timeout=30).strip()[:300]
                 except Exception as exc:
                     version = str(exc)
+                    found = False
         tools[name] = {'available': found, 'required': item['required'], 'version': version,
                        'status': item['status'], 'license': item['license']}
     mem = Path('/proc/meminfo')

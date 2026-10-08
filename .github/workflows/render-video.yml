@@ -35,8 +35,8 @@ jobs:
       PRESET: ${{ inputs.preset }}
       KEEP: ${{ inputs.keep_intermediates }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: '3.11'
           cache: pip
@@ -58,7 +58,7 @@ jobs:
           sudo apt-get install -y ffmpeg imagemagick espeak-ng fonts-dejavu-core
           python -m pip install -r requirements.txt
           python -m pip install -e .
-      - uses: actions/cache@v4
+      - uses: actions/cache@v6
         with:
           path: ${{ inputs.project }}/.cache/scenes
           key: scenes-${{ runner.os }}-${{ inputs.project }}-${{ inputs.preset }}-${{ github.sha }}
@@ -72,7 +72,7 @@ jobs:
           video-factory plan "$PROJECT"
           video-factory render "$PROJECT" --preset "$PRESET" --resolution "$RESOLUTION" "$KEEP_FLAG"
           video-factory validate "$PROJECT"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: video-${{ github.run_id }}
