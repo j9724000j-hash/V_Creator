@@ -1,0 +1,91 @@
+{
+  "package": "ghost-hassan-al-saghir",
+  "title_ar": "شبح جُبّ حسن الصغير",
+  "title_en": "The Ghost of Jubb Hassan Al-Saghir",
+  "source_archive": "FF/ghost_hassan_video_package.zip",
+  "source_files": [
+    "00_START_HERE_AR.md",
+    "01_SCRIPT_AR.md",
+    "02_IMAGE_PROMPTS_EN.md",
+    "03_IMAGE_TO_VIDEO_PROMPTS_EN.md",
+    "04_PRODUCTION_GUIDE_AR.md"
+  ],
+  "provenance": {
+    "generator": "Arena image generation (text-to-image, with reference-image conditioning)",
+    "type": "synthetic AI imagery",
+    "is_photographic": false,
+    "is_human_performance": false,
+    "license_review_required": true,
+    "license_note": "Generated images carry no third-party photography rights. Review docs/licensing.md before publishing."
+  },
+  "spec": {
+    "aspect_ratio": "16:9",
+    "target_resolution": "3840x2160",
+    "delivered_resolution": "1376x768",
+    "fps": 24,
+    "duration_seconds": 120,
+    "scenes": 10,
+    "seconds_per_scene": 12
+  },
+  "batches": [
+    { "batch": 1, "images": ["R1_layla", "R2_hassan", "R3_well"] },
+    { "batch": 2, "images": ["scene01", "scene02", "scene03", "scene04"] },
+    { "batch": 3, "images": ["scene05", "scene06", "scene07", "scene08"] },
+    { "batch": 4, "images": ["scene08", "scene09", "scene10"] }
+  ],
+  "references": [
+    {
+      "id": "R1",
+      "file": "references/R1_layla.png",
+      "subject": "Layla character sheet",
+      "attached_to": ["scene03", "scene04", "scene05", "scene06", "scene07", "scene08", "scene09", "scene10"]
+    },
+    {
+      "id": "R2",
+      "file": "references/R2_hassan.png",
+      "subject": "Hassan ghost character sheet",
+      "attached_to": ["scene04", "scene05", "scene06", "scene07", "scene09", "scene10"]
+    },
+    {
+      "id": "R3",
+      "file": "references/R3_well.png",
+      "subject": "Jubb Hassan Al-Saghir well and village environment",
+      "attached_to": ["scene01", "scene02", "scene03", "scene04", "scene05", "scene06", "scene07", "scene08", "scene09", "scene10"]
+    }
+  ],
+  "scenes": [
+    { "id": "scene01", "file": "scenes/scene01_old_well.png", "ar_title": "حكاية البئر", "timecode": "00:00-00:12", "duration": 12, "refs": ["R3"] },
+    { "id": "scene02", "file": "scenes/scene02_cyan_glow.png", "ar_title": "الضوء الذي يخشاه الجميع", "timecode": "00:12-00:24", "duration": 12, "refs": ["R3"] },
+    { "id": "scene03", "file": "scenes/scene03_blue_trace.png", "ar_title": "ليلى تتبع الأثر", "timecode": "00:24-00:36", "duration": 12, "refs": ["R1", "R3"] },
+    { "id": "scene04", "file": "scenes/scene04_hassan_appears.png", "ar_title": "ظهور حسن", "timecode": "00:36-00:48", "duration": 12, "refs": ["R1", "R2", "R3"] },
+    { "id": "scene05", "file": "scenes/scene05_question_at_well.png", "ar_title": "ما الذي يريده الشبح؟", "timecode": "00:48-01:00", "duration": 12, "refs": ["R1", "R2", "R3"] },
+    { "id": "scene06", "file": "scenes/scene06_blocked_channel.png", "ar_title": "سرّ القناة المسدودة", "timecode": "01:00-01:12", "duration": 12, "refs": ["R1", "R2", "R3"] },
+    { "id": "scene07", "file": "scenes/scene07_cannot_move_stone.png", "ar_title": "شجاعة تطلب المساعدة", "timecode": "01:12-01:24", "duration": 12, "refs": ["R1", "R2", "R3"] },
+    { "id": "scene08", "file": "scenes/scene08_village_bell.png", "ar_title": "القرية تتعاون", "timecode": "01:24-01:36", "duration": 12, "refs": ["R1", "R3"] },
+    { "id": "scene09", "file": "scenes/scene09_water_returns.png", "ar_title": "عودة الماء", "timecode": "01:36-01:48", "duration": 12, "refs": ["R1", "R2", "R3"] },
+    { "id": "scene10", "file": "scenes/scene10_lantern_at_dawn.png", "ar_title": "الحكاية التي تغيّرت", "timecode": "01:48-02:00", "duration": 12, "refs": ["R1", "R2", "R3"] }
+  ],
+  "continuity_checklist": {
+    "layla_face_consistent": true,
+    "single_braid_consistent": true,
+    "teal_scarf_consistent": true,
+    "ivory_tunic_and_boots_consistent": true,
+    "terracotta_jar_consistent": true,
+    "hassan_translucency_soft_not_horror": true,
+    "single_bronze_lantern_amber": true,
+    "crescent_with_three_dots": "visible in scene01, scene04, scene05, scene06, scene08, scene09, scene10",
+    "no_text_no_watermark": true,
+    "uniform_16_9": true
+  },
+  "known_deviations": [
+    "R1 renders Layla's braid over her left shoulder (viewer right) instead of the right shoulder stated in the package; every scene inherits R1, so the braid side stays consistent across the edit.",
+    "R3 contains two incidental extra figures (a woman and a donkey) not present in the reference text.",
+    "Delivered frames are 1376x768; the package targets 3840x2160 and no upscale pass was run."
+  ],
+  "remaining_work": [
+    "Animate each still with the matching prompt in 03_IMAGE_TO_VIDEO_PROMPTS_EN.md",
+    "Assemble 10 x 12s clips into an exact 120.000s timeline",
+    "Add Arabic narration, dialogue, music and SFX per 04_PRODUCTION_GUIDE_AR.md",
+    "Export 16:9 H.264/H.265 and run the repo's validate() QC"
+  ]
+}
