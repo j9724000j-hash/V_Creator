@@ -65,4 +65,4 @@
 - الموسيقى الإجرائية أصلية لكنها ليست أوركسترا سينمائية؛ `score.mid` قابل للتحرير. [ACE-Step 1.5](https://github.com/ace-step/ACE-Step-1.5) مولّد موسيقى قوي لكن أوزانه الكبيرة وعتاده لا يلائمان هذا الخادم، ولم يُشغّل هنا.
 - محررا سطح المكتب [Kdenlive](https://github.com/KDE/kdenlive)/[Blender](https://github.com/blender/blender) غير مثبتين في بيئة headless؛ يمكن فتح المخرجات على جهاز مناسب. المنتج المجاني لا يمنح حقوق صورة/موسيقى/صوت شخص آخر؛ لا ترفع ملفات `private/` أو أوزان `models/` إلى Git.
 
-اقرأ: [تحليل ملفات `main` والأدوات](docs/analysis-ar.md) · [الصوت والحقوق](docs/voice-ar.md) · [تراخيص الأصول](docs/licensing.md) · [الهندسة والاختبارات](docs/architecture.md).
+اقرأ: [جاهزية الأدوات الآن — فحص تشغيلي حقيقي](docs/readiness-ar.md) · [تحليل ملفات `main` والأدوات](docs/analysis-ar.md) · [الصوت والحقوق](docs/voice-ar.md) · [تراخيص الأصول](docs/licensing.md) · [الهندسة والاختبارات](docs/architecture.md).
