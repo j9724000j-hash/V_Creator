@@ -1,0 +1,222 @@
+{
+  "project_id": "jubb-hassan-al-saghir",
+  "specification": "/home/user/V_Creator/FF/ghost-hassan.yaml",
+  "source_spec_sha256": "dffa1f6fcfe1372b44aa59b57a2c274e0f364bfa805957a02bb659d6d1388e4e",
+  "timestamp_utc": "2026-10-16T09:06:07.188993+00:00",
+  "mode": "final",
+  "output": "/home/user/V_Creator/output/ghost-hassan-animated/final.mp4",
+  "resolution": [
+    3840,
+    2160
+  ],
+  "fps": 24,
+  "duration": 120.0,
+  "scenes": [
+    {
+      "id": "scene01-old-well",
+      "title": "حكاية البئر",
+      "start": 0.0,
+      "duration": 12.0,
+      "selected_tool": "Depth Anything V2 Small (ONNX) + OpenCV parallax + FFmpeg",
+      "selection_reason": "Single still + monocular depth map -> 2.5D CPU camera move",
+      "motion": "depth-parallax:dolly-in",
+      "overlay": "title overlay",
+      "image": "/home/user/V_Creator/FF/images/scenes/scene01_old_well.png",
+      "image_source": "FF/images/scenes/scene01_old_well.png — from prompts in ghost_hassan_video_package.zip/02_IMAGE_PROMPTS_EN.md",
+      "image_license": "AI-generated still (Arena text-to-image); synthetic work, no third-party photography",
+      "cache_hit": false
+    },
+    {
+      "id": "scene02-cyan-glow",
+      "title": "الضوء الذي يخشاه الجميع",
+      "start": 12.0,
+      "duration": 12.0,
+      "selected_tool": "Depth Anything V2 Small (ONNX) + OpenCV parallax + FFmpeg",
+      "selection_reason": "Single still + monocular depth map -> 2.5D CPU camera move",
+      "motion": "depth-parallax:orbit-right",
+      "overlay": "title overlay",
+      "image": "/home/user/V_Creator/FF/images/scenes/scene02_cyan_glow.png",
+      "image_source": "FF/images/scenes/scene02_cyan_glow.png — from prompts in ghost_hassan_video_package.zip/02_IMAGE_PROMPTS_EN.md",
+      "image_license": "AI-generated still (Arena text-to-image); synthetic work, no third-party photography",
+      "cache_hit": false
+    },
+    {
+      "id": "scene03-blue-trace",
+      "title": "ليلى تتبع الأثر",
+      "start": 24.0,
+      "duration": 12.0,
+      "selected_tool": "Depth Anything V2 Small (ONNX) + OpenCV parallax + FFmpeg",
+      "selection_reason": "Single still + monocular depth map -> 2.5D CPU camera move",
+      "motion": "depth-parallax:crane-up",
+      "overlay": "title overlay",
+      "image": "/home/user/V_Creator/FF/images/scenes/scene03_blue_trace.png",
+      "image_source": "FF/images/scenes/scene03_blue_trace.png — from prompts in ghost_hassan_video_package.zip/02_IMAGE_PROMPTS_EN.md",
+      "image_license": "AI-generated still (Arena text-to-image); synthetic work, no third-party photography",
+      "cache_hit": false
+    },
+    {
+      "id": "scene04-hassan-appears",
+      "title": "ظهور حسن",
+      "start": 36.0,
+      "duration": 12.0,
+      "selected_tool": "Depth Anything V2 Small (ONNX) + OpenCV parallax + FFmpeg",
+      "selection_reason": "Single still + monocular depth map -> 2.5D CPU camera move",
+      "motion": "depth-parallax:orbit-left",
+      "overlay": "title overlay",
+      "image": "/home/user/V_Creator/FF/images/scenes/scene04_hassan_appears.png",
+      "image_source": "FF/images/scenes/scene04_hassan_appears.png — from prompts in ghost_hassan_video_package.zip/02_IMAGE_PROMPTS_EN.md",
+      "image_license": "AI-generated still (Arena text-to-image); synthetic work, no third-party photography",
+      "cache_hit": false
+    },
+    {
+      "id": "scene05-question-at-well",
+      "title": "ما الذي يريده الشبح؟",
+      "start": 48.0,
+      "duration": 12.0,
+      "selected_tool": "Depth Anything V2 Small (ONNX) + OpenCV parallax + FFmpeg",
+      "selection_reason": "Single still + monocular depth map -> 2.5D CPU camera move",
+      "motion": "depth-parallax:dolly-out",
+      "overlay": "title overlay",
+      "image": "/home/user/V_Creator/FF/images/scenes/scene05_question_at_well.png",
+      "image_source": "FF/images/scenes/scene05_question_at_well.png — from prompts in ghost_hassan_video_package.zip/02_IMAGE_PROMPTS_EN.md",
+      "image_license": "AI-generated still (Arena text-to-image); synthetic work, no third-party photography",
+      "cache_hit": false
+    },
+    {
+      "id": "scene06-blocked-channel",
+      "title": "سرّ القناة المسدودة",
+      "start": 60.0,
+      "duration": 12.0,
+      "selected_tool": "Depth Anything V2 Small (ONNX) + OpenCV parallax + FFmpeg",
+      "selection_reason": "Single still + monocular depth map -> 2.5D CPU camera move",
+      "motion": "depth-parallax:pan-left",
+      "overlay": "title overlay",
+      "image": "/home/user/V_Creator/FF/images/scenes/scene06_blocked_channel.png",
+      "image_source": "FF/images/scenes/scene06_blocked_channel.png — from prompts in ghost_hassan_video_package.zip/02_IMAGE_PROMPTS_EN.md",
+      "image_license": "AI-generated still (Arena text-to-image); synthetic work, no third-party photography",
+      "cache_hit": false
+    },
+    {
+      "id": "scene07-cannot-move-stone",
+      "title": "شجاعة تطلب المساعدة",
+      "start": 72.0,
+      "duration": 12.0,
+      "selected_tool": "Depth Anything V2 Small (ONNX) + OpenCV parallax + FFmpeg",
+      "selection_reason": "Single still + monocular depth map -> 2.5D CPU camera move",
+      "motion": "depth-parallax:dolly-in",
+      "overlay": "title overlay",
+      "image": "/home/user/V_Creator/FF/images/scenes/scene07_cannot_move_stone.png",
+      "image_source": "FF/images/scenes/scene07_cannot_move_stone.png — from prompts in ghost_hassan_video_package.zip/02_IMAGE_PROMPTS_EN.md",
+      "image_license": "AI-generated still (Arena text-to-image); synthetic work, no third-party photography",
+      "cache_hit": false
+    },
+    {
+      "id": "scene08-village-bell",
+      "title": "القرية تتعاون",
+      "start": 84.0,
+      "duration": 12.0,
+      "selected_tool": "Depth Anything V2 Small (ONNX) + OpenCV parallax + FFmpeg",
+      "selection_reason": "Single still + monocular depth map -> 2.5D CPU camera move",
+      "motion": "depth-parallax:orbit-right",
+      "overlay": "title overlay",
+      "image": "/home/user/V_Creator/FF/images/scenes/scene08_village_bell.png",
+      "image_source": "FF/images/scenes/scene08_village_bell.png — from prompts in ghost_hassan_video_package.zip/02_IMAGE_PROMPTS_EN.md",
+      "image_license": "AI-generated still (Arena text-to-image); synthetic work, no third-party photography",
+      "cache_hit": false
+    },
+    {
+      "id": "scene09-water-returns",
+      "title": "عودة الماء",
+      "start": 96.0,
+      "duration": 12.0,
+      "selected_tool": "Depth Anything V2 Small (ONNX) + OpenCV parallax + FFmpeg",
+      "selection_reason": "Single still + monocular depth map -> 2.5D CPU camera move",
+      "motion": "depth-parallax:crane-up",
+      "overlay": "title overlay",
+      "image": "/home/user/V_Creator/FF/images/scenes/scene09_water_returns.png",
+      "image_source": "FF/images/scenes/scene09_water_returns.png — from prompts in ghost_hassan_video_package.zip/02_IMAGE_PROMPTS_EN.md",
+      "image_license": "AI-generated still (Arena text-to-image); synthetic work, no third-party photography",
+      "cache_hit": false
+    },
+    {
+      "id": "scene10-lantern-at-dawn",
+      "title": "الحكاية التي تغيّرت",
+      "start": 108.0,
+      "duration": 12.0,
+      "selected_tool": "Depth Anything V2 Small (ONNX) + OpenCV parallax + FFmpeg",
+      "selection_reason": "Single still + monocular depth map -> 2.5D CPU camera move",
+      "motion": "depth-parallax:orbit-left",
+      "overlay": "title overlay",
+      "image": "/home/user/V_Creator/FF/images/scenes/scene10_lantern_at_dawn.png",
+      "image_source": "FF/images/scenes/scene10_lantern_at_dawn.png — from prompts in ghost_hassan_video_package.zip/02_IMAGE_PROMPTS_EN.md",
+      "image_license": "AI-generated still (Arena text-to-image); synthetic work, no third-party photography",
+      "cache_hit": false
+    }
+  ],
+  "audio": {
+    "narration": {
+      "status": "provided",
+      "source": "/home/user/V_Creator/FF/audios/narration_full_120s.wav",
+      "provenance": {
+        "declared_engine": "sherpa-onnx 1.13.8",
+        "declared_model": "Supertone Supertonic 3 (third-party npm repack)",
+        "declared_license": "OpenRAIL-M",
+        "declared_synthesis_type": "fixed-preset neural synthetic voice; NOT a human performance or voice clone",
+        "declared_model_install_manifest_sha256": "3457189fba0541cb842ca2302213b31af936c3269cdca0af3c5af0166716ed30",
+        "source_sha256": "6d2bf5331456a4acaa2d3e0a6bccbd402ff39776e7609df7484238846f61d1ae",
+        "sidecar": "/home/user/V_Creator/FF/audios/narration_full_120s.voice.json"
+      },
+      "consent_required_for_cloned_voice": true
+    },
+    "music": {
+      "mode": "procedural",
+      "source": "/home/user/V_Creator/output/ghost-hassan-animated/cache/music_mysterious_68_2048_120.00_1567167cb6b3.wav",
+      "origin": "locally generated",
+      "license": "original/procedural"
+    },
+    "effects": {
+      "source": "/home/user/V_Creator/output/ghost-hassan-animated/cache/effects_2048_120.00_2d5ea8c7_1567167cb6b3.wav",
+      "license": "original/procedural"
+    }
+  },
+  "tools": {
+    "v_creator": "0.1.0",
+    "ffmpeg": "/home/user/V_Creator/.venv/lib/python3.11/site-packages/imageio_ffmpeg/binaries/ffmpeg-linux-x86_64-v7.0.2",
+    "ffprobe": "/home/user/V_Creator/.venv/bin/ffprobe",
+    "hyperframes": "separate optional motion backend",
+    "motion": {
+      "mode": "depth",
+      "strength": 1.0,
+      "clean_overlay": false
+    },
+    "depth_model": {
+      "label": "Depth Anything V2 Small (ViT-S) ONNX, Apache-2.0",
+      "sha256": "46c4e8eeda3a27f34701831b6a2ec7753d7b38779b215acb5633424703deed8f",
+      "runtime": "onnxruntime (CPU)",
+      "installed": true
+    }
+  },
+  "validation": {
+    "file": "/home/user/V_Creator/output/ghost-hassan-animated/final.mp4",
+    "ok": true,
+    "checks": {
+      "video_h264": true,
+      "audio_aac": true,
+      "resolution": true,
+      "fps": true,
+      "duration": true,
+      "subtitle_sidecar": true,
+      "decodes": true
+    },
+    "codec": {
+      "video": "h264",
+      "audio": "aac"
+    },
+    "width": 3840,
+    "height": 2160,
+    "fps": 24.0,
+    "duration": 120.0,
+    "decode_errors": ""
+  },
+  "note": "Subtitles are timed to scenes, NOT word-aligned to a voiceover. Review Arabic pronunciation and mix by ear before publishing."
+}
