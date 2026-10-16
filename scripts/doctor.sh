@@ -11,7 +11,7 @@ from pathlib import Path
 import os, shutil, subprocess, sys
 
 missing = []
-for name in ("PIL", "yaml", "arabic_reshaper", "bidi", "numpy", "mido", "imageio_ffmpeg", "sherpa_onnx"):
+for name in ("PIL", "yaml", "arabic_reshaper", "bidi", "numpy", "mido", "imageio_ffmpeg", "sherpa_onnx", "onnxruntime", "cv2"):
     try:
         __import__(name)
         print("OK   Python module:", name)
@@ -47,6 +47,13 @@ elif os.environ.get("V_CREATOR_SKIP_LOCAL_VOICE") == "1":
     print("WARN Local voice explicitly skipped; narration generation unavailable")
 else:
     sys.exit("FAIL: local voice missing; run .venv/bin/python scripts/install-local-voice.py")
+from v_creator import depth as depth_mod
+if depth_mod.model_is_installed():
+    print("OK   Depth Anything V2 Small (ONNX):", depth_mod.MODEL_SHA256[:16] + "...", "ready for v-creator animate")
+elif os.environ.get("V_CREATOR_SKIP_DEPTH") == "1":
+    print("WARN depth model explicitly skipped; v-creator animate unavailable, render still works")
+else:
+    sys.exit("FAIL: depth model missing; run .venv/bin/python scripts/install-depth-model.py")
 PY
 if command -v node >/dev/null 2>&1 && [[ -x node_modules/.bin/hyperframes ]]; then
   echo "OK   Node: $(node --version); HyperFrames package installed"

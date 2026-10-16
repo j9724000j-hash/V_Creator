@@ -15,6 +15,13 @@ tools:
     hardware: CPU
     url: https://python-pillow.github.io/
     role: original imagery, Arabic titles with shipped OFL fonts
+  - id: depth-anything-v2-small-onnx
+    category: camera_motion_2p5d
+    status: core_installed
+    license: Apache-2.0 (ViT-S weights); ONNX graph via fabio-sim/Depth-Anything-ONNX v2.0.0; onnxruntime MIT; warp/parallax code original
+    hardware: CPU; ~1 s per still at 518 px short side; 99092268 bytes; sha256 46c4e8ee...deed8f
+    url: https://github.com/fabio-sim/Depth-Anything-ONNX
+    role: monocular depth maps for v-creator animate parallax camera; camera move only, NOT generative video
   - id: imagemagick
     category: image_utilities
     status: detected_in_this_environment_optional

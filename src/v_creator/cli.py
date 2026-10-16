@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+from dataclasses import replace
 import importlib.util
 import json
 from pathlib import Path
@@ -10,6 +11,7 @@ import shutil
 import subprocess
 import sys
 
+from . import depth, parallax
 from .audio import generate_midi, generate_music
 from .render import ROOT, ffmpeg, ffprobe, render, validate
 from .spec import SpecError, load_project
@@ -42,6 +44,9 @@ def doctor() -> dict:
             "arabic_fonts": (ROOT / "assets/fonts/NotoKufiArabic.ttf").is_file(),
             "sherpa_onnx": importlib.util.find_spec("sherpa_onnx") is not None,
             "supertonic_voice_weights": model_is_installed(),
+            "onnxruntime": importlib.util.find_spec("onnxruntime") is not None,
+            "opencv": importlib.util.find_spec("cv2") is not None,
+            "depth_model": depth.model_is_installed(),
         },
         "optional": {
             "imagemagick": version(["convert", "-version"]) if shutil.which("convert") else None,
@@ -80,7 +85,8 @@ def plan(project) -> dict:
                   "backend": "procedural WAV + editable MIDI" if project.music_mode == "procedural" else project.music_mode},
         "sound_effects": "original procedural whoosh and impact",
         "editing": "FFmpeg H.264/AAC, scene-level SRT, validation report and manifest",
-        "motion": "HyperFrames available as an independent optional HTML/WAAPI backend",
+        "motion": "v-creator animate: Depth Anything V2 + OpenCV parallax 2.5D camera on CPU; "
+                  "HyperFrames available as an independent optional HTML/WAAPI backend",
     }
 
 
@@ -97,6 +103,20 @@ def main() -> int:
     mode.add_argument("--preview", action="store_true", help="640px draft; natural voice may be missing (default)")
     mode.add_argument("--final", action="store_true", help="Full resolution; require voice when specified")
     p_render.add_argument("--narration", type=Path, help="Explicit human/consensual AI voice file (WAV, MP3, FLAC etc.)")
+    p_animate = sub.add_parser("animate", help="Animate scene stills with a depth-parallax 2.5D camera (CPU)")
+    p_animate.add_argument("spec", type=Path)
+    p_animate.add_argument("--out", type=Path)
+    animate_mode = p_animate.add_mutually_exclusive_group()
+    animate_mode.add_argument("--preview", action="store_true", help="640px draft (default)")
+    animate_mode.add_argument("--final", action="store_true", help="Full resolution; require voice when specified")
+    p_animate.add_argument("--narration", type=Path, help="Explicit human/consensual AI voice file (WAV, MP3, FLAC etc.)")
+    p_animate.add_argument("--camera", choices=[c for c in parallax.CAMERAS if c != "auto"],
+                           help="Override the per-scene camera move (default: spec camera or auto sequence)")
+    p_animate.add_argument("--strength", type=float, default=1.0, help="Camera move amplitude, 0.2-3.0")
+    p_animate.add_argument("--clean", action="store_true", help="Move the footage without the title overlay")
+    p_depth = sub.add_parser("depth", help="Save a grayscale depth-map preview PNG for one image")
+    p_depth.add_argument("image", type=Path)
+    p_depth.add_argument("--out", type=Path, required=True)
     p_validate = sub.add_parser("validate", help="Probe/decode an existing output video")
     p_validate.add_argument("spec", type=Path)
     p_validate.add_argument("file", type=Path)
@@ -126,6 +146,26 @@ def main() -> int:
                 raise SpecError(f"Explicit narration file missing or unsupported: {narration}")
             result = render(project, args.out or ROOT / "output" / project.id,
                             preview=not args.final, narrator_override=narration)
+        elif args.command == "animate":
+            project = load_project(args.spec)
+            narration = args.narration.resolve() if args.narration else None
+            if narration and (not narration.is_file() or narration.suffix.lower() not in {".wav", ".mp3", ".m4a", ".ogg", ".flac"}):
+                raise SpecError(f"Explicit narration file missing or unsupported: {narration}")
+            if not 0.2 <= args.strength <= 3.0:
+                raise SpecError("--strength must be between 0.2 and 3.0")
+            if args.camera:
+                project = replace(project, scenes=tuple(replace(s, camera=args.camera) for s in project.scenes))
+            result = render(project, args.out or ROOT / "output" / project.id,
+                            preview=not args.final, narrator_override=narration,
+                            motion="depth", strength=args.strength, clean=args.clean)
+        elif args.command == "depth":
+            if not args.image.is_file():
+                raise SpecError(f"Image not found: {args.image}")
+            dmap, cache_file, hit = depth.cached_depth(args.image, ROOT / "output" / "depth-cache")
+            args.out.parent.mkdir(parents=True, exist_ok=True)
+            depth.save_depth_preview(dmap, args.out)
+            result = {"png": str(args.out), "cache": str(cache_file), "cache_hit": hit,
+                      "model": depth.MODEL_LABEL, "model_sha256": depth.MODEL_SHA256}
         elif args.command == "validate":
             result = validate(args.file, load_project(args.spec))
             if not result["ok"]:

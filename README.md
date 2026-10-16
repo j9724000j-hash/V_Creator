@@ -42,6 +42,18 @@
 
 [Supertonic 3 الأصلي](https://huggingface.co/Supertone/supertonic-3) يتطلب التقيد بترخيص الأوزان **OpenRAIL-M** وشروط الاستخدام/الإسناد. ملفات التشغيل هنا مأخوذة من **إعادة تغليف طرف ثالث** للحزم `@3sln/donki-lle-voice-multi{,-2,-3}@0.1.1` ومحرك [sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx) المرخص Apache-2.0؛ ضُبطت سلامة الحزم المجلوبة وتحققنا من تشغيلها، **لكن لم نتحقق مستقلاً من التطابق الثنائي مع وزن الناشر الأصلي**. ترخيص شفرة المغلّف MIT ليس ترخيص الأوزان. تفاصيل المقارنة مع بدائل الفصحى البشرية/الاصطناعية في [دليل الصوت](docs/voice-ar.md).
 
+## حركة الكاميرا العمقية (`animate`)
+
+`v-creator animate` يحرّك الصور الثابتة بكاميرا 2.5D على CPU: نموذج Depth Anything V2 Small (ONNX، Apache-2.0، ‏~95 MB، يثبّته `install.sh` تحت `models/`) يحسب خريطة عمق لكل صورة (تُخزَّن في كاش `cache/depth` داخل مجلد الإخراج)، ثم OpenCV يحرب الإطارات بباراللاكس واعٍ بالعمق (القريب يتحرك أكثر من البعيد)، وتُركّب طبقة العناوين فوقها كـ PNG شفاف فلا تتموّج النصوص مع الحرب. هذه **حركة كاميرا لا فيديو توليدي**: لا شيء داخل المشهد يتحرك ذاتياً، والحركات القوية تكشف حوافاً مطاطية خلف المقدمة.
+
+```bash
+.venv/bin/v-creator animate FF/animate-demo.yaml --preview --out output/animate-demo
+.venv/bin/v-creator animate FF/ghost-hassan.yaml --preview --narration FF/audios/narration_full_120s.wav
+.venv/bin/v-creator depth FF/images/scenes/scene01_old_well.png --out output/depth01.png   # معاينة خريطة العمق
+```
+
+الكاميرا: `auto` (تسلسل هادئ يتبدل حسب ترتيب المشهد) أو `dolly-in`/`dolly-out`/`orbit-left`/`orbit-right`/`pan-left`/`pan-right`/`crane-up`/`crane-down`/`breathe`، تُكتب لكل مشهد في YAML بحقل `camera:` أو تُفرض على كل المشاهد بـ `--camera`. `--strength` سعة الحركة (0.2–3.0) و`--clean` يلغي طبقة العناوين فوق اللقطات المتحركة. المشاهد بلا صورة تعود تلقائياً إلى zoompan الكلاسيكي.
+
 ## الموشن الغرافيك والمونتاج النهائي
 
 ```bash

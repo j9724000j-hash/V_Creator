@@ -9,6 +9,8 @@ import re
 
 import yaml
 
+from .parallax import CAMERAS
+
 
 class SpecError(ValueError):
     """A spec is unsafe or cannot be rendered as described."""
@@ -70,6 +72,7 @@ class Scene:
     image_license: str | None
     image_source: str | None
     transition: str
+    camera: str  # depth-parallax camera move; "auto" picks a calm per-scene sequence
 
 
 @dataclass(frozen=True)
@@ -165,7 +168,7 @@ def load_project(spec_file: str | Path) -> Project:
     used = set()
     for index, item in enumerate(records, 1):
         scene = _map(item, f"scenes[{index}]")
-        _fields(scene, {"id", "duration", "title", "caption", "narration", "visual", "image", "image_license", "image_source", "transition"}, f"scenes[{index}]")
+        _fields(scene, {"id", "duration", "title", "caption", "narration", "visual", "image", "image_license", "image_source", "transition", "camera"}, f"scenes[{index}]")
         scene_id = _text(scene.get("id"), f"scenes[{index}].id", max_length=64)
         if not _ID.fullmatch(scene_id) or scene_id in used:
             raise SpecError(f"scenes[{index}].id must be a unique safe lowercase slug")
@@ -176,6 +179,9 @@ def load_project(spec_file: str | Path) -> Project:
         transition = scene.get("transition", "fade")
         if transition not in {"fade", "cut"}:
             raise SpecError(f"scenes[{index}].transition must be fade or cut")
+        camera = scene.get("camera", "auto")
+        if camera not in CAMERAS:
+            raise SpecError(f"scenes[{index}].camera must be one of {list(CAMERAS)}")
         image = None
         image_license = image_source = None
         if "image" in scene:
@@ -202,6 +208,7 @@ def load_project(spec_file: str | Path) -> Project:
             image_license=image_license,
             image_source=image_source,
             transition=transition,
+            camera=camera,
         ))
     project = Project(spec_path, slug, title, width, height, fps, seed, required, narration_path,
                       mode, music_path, music_license, music_source, mood, bpm, tuple(scenes))

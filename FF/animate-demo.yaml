@@ -1,0 +1,42 @@
+# عرض سريع لحركة الكاميرا العمقية (v-creator animate) على صورتين من المشاهد.
+# الاستعمال:
+#   .venv/bin/v-creator animate FF/animate-demo.yaml --preview --out output/animate-demo
+# المواصفة الكاملة للفيلم: FF/ghost-hassan.yaml
+video:
+  id: jubb-hassan-animate-demo
+  title: "شبح جُبّ حسن الصغير — عرض الحركة العمقية"
+  width: 1920
+  height: 1080
+  fps: 24
+  seed: 2048
+
+audio:
+  narration:
+    required: false
+  music:
+    mode: procedural
+    mood: mysterious
+    bpm: 68
+
+scenes:
+  - id: demo-dolly-in
+    duration: 2
+    visual: ruins
+    title: "حكاية البئر"
+    caption: "الجُبّ القديم في أول ضوء."
+    image: images/scenes/scene01_old_well.png
+    image_license: "AI-generated still (Arena text-to-image); synthetic work, no third-party photography"
+    image_source: "FF/images/scenes/scene01_old_well.png — from prompts in ghost_hassan_video_package.zip/02_IMAGE_PROMPTS_EN.md"
+    transition: fade
+    camera: dolly-in
+
+  - id: demo-orbit-right
+    duration: 2
+    visual: ruins
+    title: "الضوء الذي يخشاه الجميع"
+    caption: "دوران جانبي حول الزقاق."
+    image: images/scenes/scene02_cyan_glow.png
+    image_license: "AI-generated still (Arena text-to-image); synthetic work, no third-party photography"
+    image_source: "FF/images/scenes/scene02_cyan_glow.png — from prompts in ghost_hassan_video_package.zip/02_IMAGE_PROMPTS_EN.md"
+    transition: fade
+    camera: orbit-right
