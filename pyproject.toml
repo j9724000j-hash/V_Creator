@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "v-creator-studio"
+version = "0.1.0"
+description = "CPU-first cinematic video assembly with Arabic captions and licensed voice inputs"
+readme = "README.md"
+requires-python = ">=3.11,<3.13"
+dependencies = [
+    "imageio-ffmpeg==0.6.0",
+    "Pillow==11.3.0",
+    "PyYAML==6.0.3",
+    "numpy==2.3.4",
+    "arabic-reshaper==3.0.0",
+    "python-bidi==0.6.6",
+    "mido==1.3.3",
+    "sherpa-onnx==1.13.8", # compact, CPU-only local Arabic-capable TTS runtime
+]
+
+[project.scripts]
+v-creator = "v_creator.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

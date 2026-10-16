@@ -1,0 +1,124 @@
+# Verified sources and installation categories on 2026-10-16.
+# This registry describes policy, not a claim that every optional model is installed.
+tools:
+  - id: ffmpeg
+    category: editing_and_audio
+    status: core_installed
+    license: GPL-enabled static binary build; upstream build flags determine terms
+    hardware: CPU
+    url: https://ffmpeg.org/
+    role: scene encoding, cuts, mixing, AAC/H.264, QC
+  - id: pillow
+    category: visual
+    status: core_installed
+    license: HPND (Pillow)
+    hardware: CPU
+    url: https://python-pillow.github.io/
+    role: original imagery, Arabic titles with shipped OFL fonts
+  - id: imagemagick
+    category: image_utilities
+    status: detected_in_this_environment_optional
+    license: ImageMagick License
+    hardware: CPU
+    url: https://imagemagick.org/
+    role: raster conversion; Pillow fallback in the actual pipeline
+  - id: hyperframes
+    category: motion_graphics
+    status: installed_and_smoke_rendered
+    license: Apache-2.0
+    hardware: CPU plus headless Chromium, slower than GPU
+    url: https://github.com/heygen-com/hyperframes
+    role: HTML/WAAPI typography, titles, HUD, compositing
+  - id: sparticuz-chromium
+    category: renderer_support
+    status: installed_and_smoke_rendered_on_linux
+    license: MIT (npm wrapper); Chromium binary has its own upstream licenses
+    hardware: CPU or GPU
+    url: https://github.com/Sparticuz/chromium
+    role: locally bundled Chromium for HyperFrames; no remote browser needed
+  - id: procedural-music
+    category: music_and_sfx
+    status: core_installed_and_tested
+    license: original project code; no external soundfont or samples
+    hardware: CPU
+    url: ./src/v_creator/audio.py
+    role: editable MIDI + atmospheric original WAV + transition SFX
+  - id: supertonic3-sherpa-onnx
+    category: arabic_local_synthetic_voice
+    status: installed_on_cpu_arabic_wav_and_mixed_preview_verified; naturalness_unreviewed
+    license: sherpa-onnx runtime Apache-2.0; repack wrapper code MIT per package; weights OpenRAIL-M with attribution/use restrictions
+    hardware: CPU; tested on 3.85 GiB RAM without GPU; model 145295768 bytes
+    url: https://huggingface.co/Supertone/supertonic-3
+    runtime_url: https://github.com/k2-fsa/sherpa-onnx
+    model_package: npm @3sln/donki-lle-voice-multi{,-2,-3}@0.1.1 (third-party repack; official binary equivalence unverified)
+    role: offline preset neural Arabic WAV; synthetic, not a human performance or clone
+  - id: nabra-82m-int8
+    category: arabic_dialect_voice
+    status: researched_download_failed_at_GitHub_Release_CDN; not_installed
+    license: verify exact model checkpoint before use
+    hardware: CPU likely; not tested here
+    url: https://github.com/k2-fsa/sherpa-onnx/releases/tag/tts-models
+    role: smaller Arabic-specific alternative when official model download works
+  - id: silma-tts
+    category: arabic_natural_voice
+    status: optional_not_installed_here
+    license: code MIT; model Apache-2.0
+    hardware: CPU possible but slow; 2.6 GB checkpoint and more memory needed
+    url: https://github.com/SILMA-AI/silma-tts
+    role: first-choice Arabic MSA / English voice cloning (speaker consent required)
+  - id: chatterbox-multilingual-v3
+    category: arabic_natural_voice
+    status: optional_not_installed_here
+    license: MIT upstream (verify model card before production)
+    hardware: GPU recommended; CPU slow/high RAM
+    url: https://github.com/resemble-ai/chatterbox
+    role: alternative emotive multilingual voice for authorized speaker
+  - id: habibi-tts-specialized
+    category: arabic_dialect_voice
+    status: research_only_not_installed
+    license: specialized ALG/EGY/IRQ/MAR/MSA Apache-2.0; unified/SAU/UAE CC-BY-NC-SA-4.0
+    hardware: GPU recommended; CPU performance unverified here
+    url: https://github.com/SWivid/Habibi-TTS
+    role: optional dialect-specific evaluation; verify exact checkpoint before use
+  - id: ace-step-1.5
+    category: generative_music
+    status: optional_not_installed_here
+    license: MIT project/model; check chosen checkpoint and dependencies
+    hardware: GPU recommended; ~10 GB core checkpoint; CPU inference very slow
+    url: https://github.com/ace-step/ACE-Step-1.5
+    role: cinematic instrumental drafts when a suitable GPU is available
+  - id: kdenlive
+    category: interactive_editing
+    status: optional_not_installed_headless
+    license: GPL-3.0
+    hardware: graphical desktop
+    url: https://github.com/KDE/kdenlive
+    role: manual shot-level editorial finishing
+  - id: blender
+    category: three_dimensional
+    status: optional_not_installed_headless
+    license: GPL-3.0
+    hardware: GPU recommended for advanced 3D
+    url: https://github.com/blender/blender
+    role: optional fantasy environments/3D shots
+  - id: remotion
+    category: motion_graphics
+    status: not_in_default_install
+    license: Remotion source-available (free individual or <=3-person org; other terms apply)
+    hardware: CPU + browser
+    url: https://www.remotion.dev/docs/license/faq
+    role: optional when React templates justify its separate license
+  - id: musicgen
+    category: generative_music
+    status: excluded_from_default
+    license: code MIT; pre-trained weights CC-BY-NC-4.0
+    hardware: large model / GPU recommended
+    url: https://github.com/facebookresearch/audiocraft
+    role: not a default commercial-friendly choice
+  - id: xtts-v2
+    category: arabic_natural_voice
+    status: excluded_from_default
+    license: code MPL-2.0; model/output CPML non-commercial
+    hardware: large model / CPU slow
+    url: https://huggingface.co/coqui/XTTS-v2
+    role: research-only unless model license independently resolved

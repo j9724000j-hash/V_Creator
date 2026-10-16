@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="ar">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=640, height=360" />
+  <style>
+    @font-face { font-family: Kufi; src: url('./font.ttf') format('truetype'); font-display: block; }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; width: 640px; height: 360px; overflow: hidden; background: #070d1d; }
+    #stage { width: 640px; height: 360px; position: relative; overflow: hidden; color: #f7f2e9; font-family: Kufi, sans-serif; }
+    .clip { position: absolute; }
+    #sky { inset: 0; background: radial-gradient(circle at 50% 49%, #244352 0, #162844 26%, #101b31 49%, #070d1d 88%); }
+    #sky::before { content: ''; position: absolute; inset: 0; background-image: radial-gradient(#fff8 1px, transparent 1px), radial-gradient(#b9eae9 1px, transparent 1px); background-size: 87px 73px, 121px 109px; background-position: 9px 5px, 42px 32px; opacity: .35; }
+    #halo { border: 2px solid #bcdfce; border-radius: 50%; width: 184px; height: 184px; top: 47px; left: 228px; box-shadow: 0 0 14px #68c9c9, inset 0 0 24px #68c9c9, 0 0 100px #68c9c966; }
+    #halo::after { content: ''; position: absolute; border: 1px solid #d2a972; border-radius: 50%; inset: 12px; opacity: .7; }
+    #hill { left: -12%; bottom: -92px; width: 124%; height: 202px; border-radius: 50% 50% 0 0; background: #0a101f; box-shadow: 0 -17px 55px #06121ed9; }
+    #eyebrow { color: #d3b68d; width: 100%; top: 43px; text-align: center; font-size: 12px; letter-spacing: 3px; direction: ltr; }
+    #title { width: 100%; top: 218px; text-align: center; direction: rtl; font-size: 35px; font-weight: 700; line-height: 1.5; text-shadow: 0 3px 10px #050b19; }
+    #rule { height: 2px; width: 46px; top: 289px; left: 297px; background: #d9b87a; }
+  </style>
+</head>
+<body>
+  <div id="stage" data-composition-id="fantasy-title" data-no-timeline="true" data-start="0" data-duration="3" data-width="640" data-height="360" data-fps="24">
+    <div id="sky" class="clip" data-start="0" data-duration="3" data-track-index="0"></div>
+    <div id="halo" class="clip" data-start="0" data-duration="3" data-track-index="1"></div>
+    <div id="hill" class="clip" data-start="0" data-duration="3" data-track-index="2"></div>
+    <div id="eyebrow" class="clip" data-start="0" data-duration="3" data-track-index="3">V  /  C R E A T O R</div>
+    <h1 id="title" class="clip" data-start="0" data-duration="3" data-track-index="4">البوّابة المنسيّة</h1>
+    <div id="rule" class="clip" data-start="0" data-duration="3" data-track-index="5"></div>
+  </div>
+  <script>
+    // The WAAPI adapter seeks finite, paused animations to each requested frame.
+    // No GSAP, network, rAF, wall clock or hidden account is needed.
+    const animations = [
+      document.getElementById('halo').animate([
+        {transform: 'scale(.78)', opacity: 0},
+        {transform: 'scale(1.04)', opacity: .95, offset: .48},
+        {transform: 'scale(1.12)', opacity: .35},
+      ], {duration: 3000, fill: 'both', iterations: 1}),
+      document.getElementById('title').animate([
+        {transform: 'translateY(34px)', opacity: 0},
+        {transform: 'translateY(0)', opacity: 1, offset: .32},
+        {transform: 'translateY(-7px)', opacity: 1, offset: .75},
+        {transform: 'translateY(-11px)', opacity: 0},
+      ], {duration: 3000, fill: 'both', iterations: 1}),
+      document.getElementById('rule').animate([
+        {transform: 'scaleX(0)', opacity: 0},
+        {transform: 'scaleX(1)', opacity: 1, offset: .42},
+        {transform: 'scaleX(1)', opacity: 0},
+      ], {duration: 3000, fill: 'both', iterations: 1}),
+    ];
+    for (const animation of animations) animation.pause();
+  </script>
+</body>
+</html>

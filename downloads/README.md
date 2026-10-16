@@ -1,6 +1,6 @@
 # Arabic greeting audio / التسجيل العربي
 
-The two downloadable files contain the same utterance: «مرحبا كيف حالكم يا قوم».
+The MP3 and WAV contain the same utterance: «مرحبا كيف حالكم يا قوم». The ZIP bundles both files for a single browser-friendly download.
 
 - `marhaba-kayf-halukum-ya-qawm.mp3`: 44.1 kHz mono MP3 (192 kbps), about 2.7 seconds.
 - `marhaba-kayf-halukum-ya-qawm.wav`: 44.1 kHz mono 16-bit PCM WAV.

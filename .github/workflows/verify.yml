@@ -1,0 +1,47 @@
+name: Offline video pipeline checks
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  smoke:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install CPU-first tools and pinned local voice (no paid API)
+        run: ./scripts/install.sh
+      - name: Check local programs and fonts
+        run: ./scripts/doctor.sh
+      - name: Unit and end-to-end tests including final voice gate
+        run: .venv/bin/python -m pytest -q
+      - name: Check HTML/WAAPI motion composition
+        run: ./scripts/motion.sh lint motion/fantasy-title
+      - name: Generate, mix and validate a local Arabic voice PREVIEW (not a human performance)
+        run: |
+          .venv/bin/v-creator narrate videos/fantasy-intro/voice-demo.yaml --out output/ci-voice/narration.wav
+          .venv/bin/v-creator render videos/fantasy-intro/voice-demo.yaml --out output/ci-voice --preview --narration output/ci-voice/narration.wav
+          .venv/bin/v-creator validate videos/fantasy-intro/voice-demo.yaml output/ci-voice/preview.mp4
+      - name: Render and validate no-voice sample PREVIEW (not a final film)
+        run: |
+          .venv/bin/v-creator render videos/fantasy-intro/video.yaml --out output/ci-preview --preview
+          .venv/bin/v-creator validate videos/fantasy-intro/video.yaml output/ci-preview/preview.mp4
+      - name: Save only the public draft and reports, never audio references or weights
+        uses: actions/upload-artifact@v4
+        with:
+          name: no-narrator-arabic-draft-preview
+          path: |
+            output/ci-preview/preview.mp4
+            output/ci-preview/subtitles.srt
+            output/ci-preview/validation-report.json
+            output/ci-preview/production-manifest.json
+          if-no-files-found: error
+          retention-days: 7
