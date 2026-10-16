@@ -153,7 +153,8 @@ def warp_maps(depth: np.ndarray, state: CameraState, focus: float, width: int,
     if (mw, mh) != (width, height):
         sx = cv2.resize(sx, (width, height), interpolation=cv2.INTER_LINEAR)
         sy = cv2.resize(sy, (width, height), interpolation=cv2.INTER_LINEAR)
-    return sx.astype(np.float32), sy.astype(np.float32)
+    # cv2 returns float32 already; avoid a full-resolution copy per frame.
+    return np.ascontiguousarray(sx, dtype=np.float32), np.ascontiguousarray(sy, dtype=np.float32)
 
 
 def frames(base: np.ndarray, depth: np.ndarray, camera: str, count: int, *,
@@ -171,27 +172,58 @@ def frames(base: np.ndarray, depth: np.ndarray, camera: str, count: int, *,
         yield cv2.remap(base, mx, my, cv2.INTER_LINEAR, borderMode=cv2.BORDER_REFLECT_101)
 
 
+def _overlay_blender(overlay: Path, width: int, height: int):
+    """Return a per-frame "over" blend for a full-frame RGBA title overlay.
+
+    The title (and its scrim) is baked into each frame here instead of through
+    FFmpeg's looped PNG input plus overlay filter: that filter graph buffers
+    full-resolution frames without back-pressure and peaks near 2 GB on a 4K
+    render, which OOM-kills the encoder next to the Python warper on a small
+    CPU-only box. cv2.blendLinear does the same math in ~15 ms per 4K frame
+    (measured; a float32 NumPy blend costs ~120 ms).
+    """
+    import cv2
+
+    with Image.open(overlay) as image:
+        rgba = image.convert("RGBA")
+        if rgba.size != (width, height):
+            rgba = rgba.resize((width, height), Image.Resampling.BILINEAR)
+        raw = np.asarray(rgba, dtype=np.uint8)
+    if not raw[:, :, 3].any():
+        return None
+    weight = np.ascontiguousarray(raw[:, :, 3], dtype=np.float32)
+    weight /= 255.0
+    inverse = np.ascontiguousarray(1.0 - weight, dtype=np.float32)
+    source = np.ascontiguousarray(raw[:, :, :3])
+
+    def blend(frame: np.ndarray) -> np.ndarray:
+        return cv2.blendLinear(source, frame, weight, inverse)
+
+    return blend
+
+
 def encode_clip(frame_iter: Iterator[np.ndarray], *, width: int, height: int, fps: int, count: int,
                 out: Path, ffmpeg: str, overlay: Path | None, fade: float | None,
                 duration: float, preview: bool, log: Path) -> None:
-    """Pipe raw RGB frames to FFmpeg; optional title overlay PNG and fades."""
+    """Pipe raw RGB frames to FFmpeg; title overlay is baked in Python, fades in FFmpeg."""
     cmd = [ffmpeg, "-hide_banner", "-loglevel", "error", "-y",
            "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{width}x{height}",
            "-framerate", str(fps), "-i", "pipe:0"]
-    chain = []
-    if overlay is not None:
-        cmd += ["-loop", "1", "-framerate", str(fps), "-i", str(overlay)]
-        chain.append("[0:v][1:v]overlay=0:0:format=auto:shortest=1")
-    else:
-        chain.append("[0:v]null")
-    chain.append("format=yuv420p")
+    blender = _overlay_blender(overlay, width, height) if overlay is not None else None
+    chain = ["[0:v]null", "format=yuv420p"]
     if fade:
         chain += [f"fade=t=in:st=0:d={fade:.3f}",
                   f"fade=t=out:st={max(0.0, duration - fade):.3f}:d={fade:.3f}"]
     cmd += ["-filter_complex", ",".join(chain) + "[v]", "-map", "[v]", "-frames:v", str(count),
             "-c:v", "libx264", "-preset", "ultrafast" if preview else "medium",
-            "-crf", "27" if preview else "19", "-pix_fmt", "yuv420p",
-            "-an", "-movflags", "+faststart", str(out)]
+            "-crf", "27" if preview else "19", "-pix_fmt", "yuv420p"]
+    if not preview:
+        # Full-resolution renders must fit small CPU boxes: with libx264's auto
+        # threads a 4K medium encode peaks above 2 GB (measured), which OOM-kills
+        # the encoder next to the Python warper. Capping frame threads and the
+        # lookahead keeps the same CRF quality at roughly 0.7 GB.
+        cmd += ["-threads", "2", "-x264-params", "rc-lookahead=15:sync-lookahead=0"]
+    cmd += ["-an", "-movflags", "+faststart", str(out)]
     with log.open("a", encoding="utf-8") as stream:
         stream.write("$ " + " ".join(repr(p) for p in cmd) + "  <raw frames on stdin>\n")
         stream.flush()
@@ -200,6 +232,8 @@ def encode_clip(frame_iter: Iterator[np.ndarray], *, width: int, height: int, fp
         written = 0
         try:
             for frame in frame_iter:
+                if blender is not None:
+                    frame = blender(frame)
                 if frame.shape != (height, width, 3) or frame.dtype != np.uint8:
                     raise ValueError(f"frame has shape {frame.shape} / {frame.dtype}")
                 process.stdin.write(memoryview(np.ascontiguousarray(frame)))

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone
+import gc
 import hashlib
 import json
 from pathlib import Path
@@ -269,6 +270,17 @@ def render(project: Project, out_dir: Path, *, preview: bool = True,
     clips = []
     cursor = 0.0
     estimator = depth.DepthEstimator() if motion == "depth" and depth.model_is_installed() else None
+    if estimator is not None:
+        # Predict every scene's depth map up front, then drop the ONNX session
+        # before any encoder starts: the runtime arena holds hundreds of MB
+        # (measured ~0.6 GB) that the FFmpeg children need more on a small
+        # CPU-only box. Every later lookup is a cache hit, so no session returns.
+        for scene in project.scenes:
+            if scene.image is not None and scene.image.is_file():
+                depth.cached_depth(scene.image, cache / "depth", estimator=estimator)
+        del estimator
+        estimator = None
+        gc.collect()
     for n, scene in enumerate(project.scenes, 1):
         plate, clip, hit = _clip(scene, project, n, width, height, cache, preview, log,
                                  motion=motion, strength=strength, clean=clean, estimator=estimator)

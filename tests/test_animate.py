@@ -97,6 +97,28 @@ def test_overlay_is_transparent_where_empty(tmp_path: Path) -> None:
     assert tinted.getpixel((2, 2))[3] > 0          # photo tint covers everything
 
 
+def test_overlay_blender_composites_title_into_the_frame(tmp_path: Path) -> None:
+    """The title/scrim is baked in Python (cv2.blendLinear), replacing FFmpeg's overlay."""
+    overlay = Image.new("RGBA", (8, 6), (0, 0, 0, 0))
+    for y in (2, 3):
+        for x in (2, 3):
+            overlay.putpixel((x, y), (200, 100, 50, 128))
+    path = tmp_path / "overlay.png"
+    overlay.save(path)
+    blender = parallax._overlay_blender(path, 8, 6)
+    assert blender is not None
+    frame = np.full((6, 8, 3), 40, dtype=np.uint8)
+    out = blender(frame)
+    assert out.dtype == np.uint8 and out.shape == (6, 8, 3)
+    expected = round(40 * (1 - 128 / 255) + 200 * (128 / 255))
+    assert abs(int(out[2, 2, 0]) - expected) <= 1      # "over" blend, not a copy
+    assert abs(int(out[3, 3, 1]) - round(40 * (1 - 128 / 255) + 100 * (128 / 255))) <= 1
+    assert tuple(out[0, 0]) == (40, 40, 40)            # transparent pixels untouched
+    empty = tmp_path / "empty.png"
+    Image.new("RGBA", (8, 6), (0, 0, 0, 0)).save(empty)
+    assert parallax._overlay_blender(empty, 8, 6) is None
+
+
 def test_spec_camera_field_validated(tmp_path: Path) -> None:
     data = content()
     data["scenes"][0]["camera"] = "orbit-left"

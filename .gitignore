@@ -31,6 +31,13 @@ checkpoints/
 videos/**/private/
 !assets/fonts/*.ttf
 
+# Requested deliverable: the finished 4K film (3840x2160, 120 s, H.264/AAC,
+# 86 MB) rendered locally by `v-creator animate --final`, with its subtitle
+# sidecar and production manifest. Everything else under FF/ stays untracked.
+!FF/ghost-hassan-final-4k.mp4
+!FF/ghost-hassan-final-4k.srt
+!FF/ghost-hassan-final-4k.manifest.json
+
 # Requested deliverable: the generated scene audio set for the FF package
 # (13+ MB, produced locally by scripts/narrate-scenes.py and documented in
 # FF/audios/README.md). Human recordings and voice samples stay untracked.
