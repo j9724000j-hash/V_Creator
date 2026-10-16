@@ -1,0 +1,134 @@
+# شبح جُبّ حسن الصغير — مواصفة إنتاج 10 مشاهد × 12 ثانية = 120 ثانية
+# مبنية على FF/ghost_hassan_video_package.zip (السكريبت وبرومبتات الصور).
+# الاستعمال:
+#   .venv/bin/v-creator narrate FF/ghost-hassan.yaml --out FF/audios/narration_full_120s.wav
+#   .venv/bin/v-creator render  FF/ghost-hassan.yaml --final --narration <wav> --out output/ghost-hassan
+#
+# الصور تحت FF/images/ وهي أصول مولّدة آلياً؛ image_license/image_source أدناه توثّق ذلك.
+video:
+  id: jubb-hassan-al-saghir
+  title: "شبح جُبّ حسن الصغير"
+  width: 3840
+  height: 2160
+  fps: 24
+  seed: 2048
+
+audio:
+  narration:
+    required: true
+    path: audios/narration_full_120s.wav
+  music:
+    mode: procedural
+    mood: mysterious
+    bpm: 68
+
+scenes:
+  - id: scene01-old-well
+    duration: 12
+    visual: ruins
+    title: "حكاية البئر"
+    caption: "في قريةٍ صغيرة بين التلال، جفّت العين القديمة، ولم يبقَ يملأ الليل سوى حكايةٍ غامضة عن جُبّ حسن الصغير."
+    narration: "في قريةٍ صغيرة بين التلال، جفّت العين القديمة، ولم يبقَ يملأ الليل سوى حكايةٍ غامضة عن جُبّ حسن الصغير."
+    image: images/scenes/scene01_old_well.png
+    image_license: "AI-generated still (Arena text-to-image); synthetic work, no third-party photography"
+    image_source: "FF/images/scenes/scene01_old_well.png — from prompts in ghost_hassan_video_package.zip/02_IMAGE_PROMPTS_EN.md"
+    transition: fade
+
+  - id: scene02-cyan-glow
+    duration: 12
+    visual: ruins
+    title: "الضوء الذي يخشاه الجميع"
+    caption: "كان أهل القرية يتهامسون بأن شبحًا يظهر قرب البئر بعد منتصف الليل؛ لذلك لم يجرؤ أحدٌ على الاقتراب منها."
+    narration: "كان أهل القرية يتهامسون بأن شبحًا يظهر قرب البئر بعد منتصف الليل؛ لذلك لم يجرؤ أحدٌ على الاقتراب منها."
+    image: images/scenes/scene02_cyan_glow.png
+    image_license: "AI-generated still (Arena text-to-image); synthetic work, no third-party photography"
+    image_source: "FF/images/scenes/scene02_cyan_glow.png — from prompts in ghost_hassan_video_package.zip/02_IMAGE_PROMPTS_EN.md"
+    transition: fade
+
+  - id: scene03-blue-trace
+    duration: 12
+    visual: stars
+    title: "ليلى تتبع الأثر"
+    caption: "لكن ليلى، ذات الضفيرة الطويلة والوشاح الفيروزي، سمعت رنينًا خافتًا ورأت أثرًا أزرق يشقّ سكون الساحة."
+    narration: "لكن ليلى، ذات الضفيرة الطويلة والوشاح الفيروزي، سمعت رنينًا خافتًا ورأت أثرًا أزرق يشقّ سكون الساحة."
+    image: images/scenes/scene03_blue_trace.png
+    image_license: "AI-generated still (Arena text-to-image); synthetic work, no third-party photography"
+    image_source: "FF/images/scenes/scene03_blue_trace.png — from prompts in ghost_hassan_video_package.zip/02_IMAGE_PROMPTS_EN.md"
+    transition: fade
+
+  - id: scene04-hassan-appears
+    duration: 12
+    visual: citadel
+    title: "ظهور حسن"
+    caption: "تبعت الضوء وهي يضمّ جرّتها الفارغة. ارتفع الضباب، وظهر طفلٌ شفاف يحمل فانوسًا نحاسيًا، بعينين حزينتين لا مخيفتين."
+    narration: "تبعت الضوء وهي يضمّ جرّتها الفارغة. ارتفع الضباب، وظهر طفلٌ شفاف يحمل فانوسًا نحاسيًا، بعينين حزينتين لا مخيفتين."
+    image: images/scenes/scene04_hassan_appears.png
+    image_license: "AI-generated still (Arena text-to-image); synthetic work, no third-party photography"
+    image_source: "FF/images/scenes/scene04_hassan_appears.png — from prompts in ghost_hassan_video_package.zip/02_IMAGE_PROMPTS_EN.md"
+    transition: fade
+
+  - id: scene05-question-at-well
+    duration: 12
+    visual: ruins
+    title: "ما الذي يريده الشبح؟"
+    caption: "ليلى: أأنت حسن؟ / حسن: نعم. لا أريد إخافتكم… أريدكم أن تسمعوا الماء."
+    narration: "أأنت حسن؟ نعم. لا أريد إخافتكم… أريدكم أن تسمعوا الماء."
+    image: images/scenes/scene05_question_at_well.png
+    image_license: "AI-generated still (Arena text-to-image); synthetic work, no third-party photography"
+    image_source: "FF/images/scenes/scene05_question_at_well.png — from prompts in ghost_hassan_video_package.zip/02_IMAGE_PROMPTS_EN.md"
+    transition: fade
+
+  - id: scene06-blocked-channel
+    duration: 12
+    visual: ruins
+    title: "سرّ القناة المسدودة"
+    caption: "قادها خلف البئر إلى قناةٍ حجرية غطّتها الأتربة. ومن شقّ صغير، تسلّل خريرٌ ضعيف، كأن الأرض تطلب النجدة."
+    narration: "قادها خلف البئر إلى قناةٍ حجرية غطّتها الأتربة. ومن شقّ صغير، تسلّل خريرٌ ضعيف، كأن الأرض تطلب النجدة."
+    image: images/scenes/scene06_blocked_channel.png
+    image_license: "AI-generated still (Arena text-to-image); synthetic work, no third-party photography"
+    image_source: "FF/images/scenes/scene06_blocked_channel.png — from prompts in ghost_hassan_video_package.zip/02_IMAGE_PROMPTS_EN.md"
+    transition: fade
+
+  - id: scene07-cannot-move-stone
+    duration: 12
+    visual: ruins
+    title: "شجاعة تطلب المساعدة"
+    caption: "حاولت ليلى دفع الصخرة وحدها، لكنها لم تتحرك. عندها فهمت أن بعض الأبواب لا يفتحها الشجاع وحده، بل يفتحها الجميع."
+    narration: "حاولت ليلى دفع الصخرة وحدها، لكنها لم تتحرك. عندها فهمت أن بعض الأبواب لا يفتحها الشجاع وحده، بل يفتحها الجميع."
+    image: images/scenes/scene07_cannot_move_stone.png
+    image_license: "AI-generated still (Arena text-to-image); synthetic work, no third-party photography"
+    image_source: "FF/images/scenes/scene07_cannot_move_stone.png — from prompts in ghost_hassan_video_package.zip/02_IMAGE_PROMPTS_EN.md"
+    transition: fade
+
+  - id: scene08-village-bell
+    duration: 12
+    visual: citadel
+    title: "القرية تتعاون"
+    caption: "ركضت إلى الساحة وقرعت الجرس بكل قوتها. استيقظ الأهالي، ولما رأوا القناة، عادوا معها حاملين الحبال والمصابيح."
+    narration: "ركضت إلى الساحة وقرعت الجرس بكل قوتها. استيقظ الأهالي، ولما رأوا القناة، عادوا معها حاملين الحبال والمصابيح."
+    image: images/scenes/scene08_village_bell.png
+    image_license: "AI-generated still (Arena text-to-image); synthetic work, no third-party photography"
+    image_source: "FF/images/scenes/scene08_village_bell.png — from prompts in ghost_hassan_video_package.zip/02_IMAGE_PROMPTS_EN.md"
+    transition: fade
+
+  - id: scene09-water-returns
+    duration: 12
+    visual: forest
+    title: "عودة الماء"
+    caption: "معًا أزاحوا الصخور، فانطلقت المياه صافيةً نحو العين اليابسة. امتلأت القناة بالضوء، واختلط خرير الماء بضحكات القرية."
+    narration: "معًا أزاحوا الصخور، فانطلقت المياه صافيةً نحو العين اليابسة. امتلأت القناة بالضوء، واختلط خرير الماء بضحكات القرية."
+    image: images/scenes/scene09_water_returns.png
+    image_license: "AI-generated still (Arena text-to-image); synthetic work, no third-party photography"
+    image_source: "FF/images/scenes/scene09_water_returns.png — from prompts in ghost_hassan_video_package.zip/02_IMAGE_PROMPTS_EN.md"
+    transition: fade
+
+  - id: scene10-lantern-at-dawn
+    duration: 12
+    visual: stars
+    title: "الحكاية التي تغيّرت"
+    caption: "مع الفجر، تلاشى حسن وترك فانوسه فوق حافة البئر. ومنذ ذلك اليوم، عرف الجميع أن بعض الظلال لا تريد إخافتنا؛ إنها تنتظر من يُصغي."
+    narration: "مع الفجر، تلاشى حسن وترك فانوسه فوق حافة البئر. ومنذ ذلك اليوم، عرف الجميع أن بعض الظلال لا تريد إخافتنا؛ إنها تنتظر من يُصغي."
+    image: images/scenes/scene10_lantern_at_dawn.png
+    image_license: "AI-generated still (Arena text-to-image); synthetic work, no third-party photography"
+    image_source: "FF/images/scenes/scene10_lantern_at_dawn.png — from prompts in ghost_hassan_video_package.zip/02_IMAGE_PROMPTS_EN.md"
+    transition: fade

@@ -31,6 +31,15 @@ checkpoints/
 videos/**/private/
 !assets/fonts/*.ttf
 
+# Requested deliverable: the generated scene audio set for the FF package
+# (13+ MB, produced locally by scripts/narrate-scenes.py and documented in
+# FF/audios/README.md). Human recordings and voice samples stay untracked.
+!FF/audios/*.wav
+!FF/audios/*.mp3
+!FF/audios/narration/*.wav
+!FF/audios/dialogue/*.wav
+FF/audios/private/
+
 # Editors
 .DS_Store
 *.swp

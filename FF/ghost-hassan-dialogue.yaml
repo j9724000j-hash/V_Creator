@@ -1,0 +1,14 @@
+# حوار المشهد الخامس — ملفات منفصلة بصوتين مختلفين
+# النص كما ورد حرفياً في 01_SCRIPT_AR.md (مشهد 05: «ما الذي يريده الشبح؟»).
+# speaker: فهرس صوت Supertonic الثابت (0..9) — 0 هو صوت الراوي.
+# بدّل الفهارس بعد الاستماع إن أردت أداءً مختلفاً، وأعد التوليد بالأمر:
+#   .venv/bin/python scripts/narrate-scenes.py --spec FF/ghost-hassan.yaml \
+#     --outdir FF/audios --dialogue FF/ghost-hassan-dialogue.yaml
+scene: scene05-question-at-well
+lines:
+  - role: layla
+    speaker: 1
+    text: "أأنت حسن؟"
+  - role: hassan
+    speaker: 4
+    text: "نعم. لا أريد إخافتكم… أريدكم أن تسمعوا الماء."
