@@ -3,6 +3,9 @@
 # الاستعمال:
 #   .venv/bin/v-creator narrate FF/ghost-hassan.yaml --out FF/audios/narration_full_120s.wav
 #   .venv/bin/v-creator render  FF/ghost-hassan.yaml --final --narration <wav> --out output/ghost-hassan
+#   .venv/bin/v-creator animate FF/ghost-hassan.yaml --preview --narration FF/audios/narration_full_120s.wav
+#     (حركة كاميرا عمقية 2.5D فوق الصور؛ لكل مشهد حقل camera: اختياري،
+#      أو --camera/--strength/--clean لكل التشغيلة؛ المشاهد بلا صورة تعود إلى zoompan)
 #
 # الصور تحت FF/images/ وهي أصول مولّدة آلياً؛ image_license/image_source أدناه توثّق ذلك.
 video:

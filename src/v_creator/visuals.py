@@ -100,45 +100,82 @@ def _wrap(draw: ImageDraw.ImageDraw, text: str, font: ImageFont.FreeTypeFont, ma
     return lines
 
 
-def make_plate(scene: Scene, dest: Path, width: int, height: int, seed: int, ordinal: int) -> None:
-    if scene.image:
-        with Image.open(scene.image) as source:
-            image = ImageOps.fit(source.convert("RGB"), (width, height), method=Image.Resampling.LANCZOS).convert("RGBA")
+def _text_layer(size: tuple[int, int], xy: tuple[float, float], text: str, font: ImageFont.FreeTypeFont,
+                fill: tuple[int, int, int, int], anchor: str, stroke_width: int = 0,
+                stroke_fill: tuple[int, int, int, int] | None = None) -> Image.Image:
+    """Anti-aliased text as a straight-alpha RGBA layer (correct over transparency)."""
+    layer = Image.new("RGBA", size, (0, 0, 0, 0))
+    passes = []
+    if stroke_width and stroke_fill:
+        passes.append((stroke_fill, stroke_width))
+    passes.append((fill, 0))
+    for (r, g, b, a), width in passes:
+        mask = Image.new("L", size, 0)
+        ImageDraw.Draw(mask).text(xy, text, font=font, fill=255, anchor=anchor,
+                                  stroke_width=width, stroke_fill=255)
+        colour = Image.new("RGBA", size, (r, g, b, 0))
+        colour.putalpha(mask.point(lambda v, a=a: v * a // 255))
+        layer = Image.alpha_composite(layer, colour)
+    return layer
+
+
+def make_overlay(scene: Scene, width: int, height: int, ordinal: int, *, darken_image: bool) -> Image.Image:
+    """Transparent RGBA layer: optional photo tint, haze, header and Arabic title.
+
+    Kept separate from the background so camera moves (Ken Burns or depth
+    parallax) never warp the typography. Every element is alpha-composited so
+    the layer looks the same over any background.
+    """
+    size = (width, height)
+    image = Image.new("RGBA", size, (0, 0, 0, 0))
+    if darken_image:
         # Separate licensed/user images from generated artwork; always keep provenance in manifest.
-        overlay = Image.new("RGBA", (width, height), (3, 8, 23, 115))
-        image = Image.alpha_composite(image, overlay)
-    else:
-        image = _make_background(width, height, scene, seed)
+        image = Image.alpha_composite(image, Image.new("RGBA", size, (3, 8, 23, 115)))
     top, lower, accent = _palette(scene.visual)
-    haze = Image.new("RGBA", image.size)
-    painter = ImageDraw.Draw(haze, "RGBA")
-    painter.rectangle((0, height * 0.60, width, height), fill=(2, 6, 19, 130))
-    painter.ellipse((int(width * 0.28), int(height * 0.14), int(width * 0.72), int(height * 0.72)),
-                    fill=(*accent, 23))
-    image = Image.alpha_composite(image, haze)
-    draw = ImageDraw.Draw(image, "RGBA")
+    for shape in ("band", "glow"):
+        layer = Image.new("RGBA", size, (0, 0, 0, 0))
+        painter = ImageDraw.Draw(layer)
+        if shape == "band":
+            painter.rectangle((0, height * 0.60, width, height), fill=(2, 6, 19, 130))
+        else:
+            painter.ellipse((int(width * 0.28), int(height * 0.14), int(width * 0.72), int(height * 0.72)),
+                            fill=(*accent, 23))
+        image = Image.alpha_composite(image, layer)
     margin = int(width * 0.07)
     font_small = ImageFont.truetype(FONTS / "NotoSansArabic.ttf", max(13, round(height * 0.029)))
-    draw.text((margin, int(height * 0.083)), "V  /  C R E A T O R", font=font_small,
-              fill=(220, 205, 178, 180), anchor="lm")
-    draw.text((width - margin, int(height * 0.083)), f"{ordinal:02d}", font=font_small,
-              fill=(*accent, 220), anchor="rm")
+    image = Image.alpha_composite(image, _text_layer(size, (margin, int(height * 0.083)), "V  /  C R E A T O R",
+                                                     font_small, (220, 205, 178, 180), "lm"))
+    image = Image.alpha_composite(image, _text_layer(size, (width - margin, int(height * 0.083)), f"{ordinal:02d}",
+                                                     font_small, (*accent, 220), "rm"))
+    measure = ImageDraw.Draw(image)
     title_size = max(28, int(height * 0.092))
     for _ in range(28):
         title_font = ImageFont.truetype(FONTS / "NotoKufiArabic.ttf", title_size)
-        lines = _wrap(draw, scene.title, title_font, int(width * 0.82))
-        if len(lines) <= 2 and all(draw.textlength(display_text(line), font=title_font) < width * 0.87 for line in lines):
+        lines = _wrap(measure, scene.title, title_font, int(width * 0.82))
+        if len(lines) <= 2 and all(measure.textlength(display_text(line), font=title_font) < width * 0.87 for line in lines):
             break
         title_size -= 2
     line_height = title_size * 1.45
     base_y = height * 0.77 - (len(lines) - 1) * line_height / 2
     for line_number, line in enumerate(lines):
-        draw.text((width / 2, base_y + line_number * line_height), display_text(line),
-                  font=title_font, fill=(249, 246, 240, 255), anchor="mm",
-                  stroke_width=max(1, width // 640), stroke_fill=(9, 11, 27, 210))
+        image = Image.alpha_composite(image, _text_layer(
+            size, (width / 2, base_y + line_number * line_height), display_text(line), title_font,
+            (249, 246, 240, 255), "mm", stroke_width=max(1, width // 640), stroke_fill=(9, 11, 27, 210)))
     rule_width = int(width * 0.075)
     y_rule = int(min(height * 0.91, base_y + len(lines) * line_height / 2 + height * 0.045))
-    draw.rounded_rectangle((width // 2 - rule_width // 2, y_rule, width // 2 + rule_width // 2,
-                            y_rule + max(2, round(height * 0.004))), radius=2, fill=(*accent, 240))
+    rule = Image.new("RGBA", size, (0, 0, 0, 0))
+    ImageDraw.Draw(rule).rounded_rectangle((width // 2 - rule_width // 2, y_rule, width // 2 + rule_width // 2,
+                                            y_rule + max(2, round(height * 0.004))), radius=2, fill=(*accent, 240))
+    return Image.alpha_composite(image, rule)
+
+
+def make_plate(scene: Scene, dest: Path, width: int, height: int, seed: int, ordinal: int) -> None:
+    if scene.image:
+        with Image.open(scene.image) as source:
+            image = ImageOps.fit(source.convert("RGB"), (width, height), method=Image.Resampling.LANCZOS).convert("RGBA")
+    else:
+        image = _make_background(width, height, scene, seed)
+    image = Image.alpha_composite(image, make_overlay(scene, width, height, ordinal,
+                                                      darken_image=scene.image is not None))
     dest.parent.mkdir(parents=True, exist_ok=True)
     image.convert("RGB").save(dest, optimize=True)

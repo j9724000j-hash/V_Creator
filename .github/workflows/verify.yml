@@ -34,6 +34,10 @@ jobs:
         run: |
           .venv/bin/v-creator render videos/fantasy-intro/video.yaml --out output/ci-preview --preview
           .venv/bin/v-creator validate videos/fantasy-intro/video.yaml output/ci-preview/preview.mp4
+      - name: Animate stills with the CPU depth-parallax camera and validate the preview
+        run: |
+          .venv/bin/v-creator animate FF/animate-demo.yaml --out output/ci-animate --preview
+          .venv/bin/v-creator validate FF/animate-demo.yaml output/ci-animate/preview.mp4
       - name: Save only the public draft and reports, never audio references or weights
         uses: actions/upload-artifact@v4
         with:
@@ -43,5 +47,7 @@ jobs:
             output/ci-preview/subtitles.srt
             output/ci-preview/validation-report.json
             output/ci-preview/production-manifest.json
+            output/ci-animate/preview.mp4
+            output/ci-animate/production-manifest.json
           if-no-files-found: error
           retention-days: 7

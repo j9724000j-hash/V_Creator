@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Local CPU toolchain. Downloads a pinned compact voice model (~145 MB) without cloud credentials.
 # Set V_CREATOR_SKIP_LOCAL_VOICE=1 only when intentionally skipping the voice model.
+# Set V_CREATOR_SKIP_DEPTH=1 only when intentionally skipping the ~95 MB depth model (animate).
 set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
@@ -17,6 +18,12 @@ python3 -m venv .venv
 ffmpeg_path="$(.venv/bin/python -c 'import imageio_ffmpeg; print(imageio_ffmpeg.get_ffmpeg_exe())')"
 if [ ! -e .venv/bin/ffmpeg ] && [ -x "$ffmpeg_path" ]; then
   ln -s "$ffmpeg_path" .venv/bin/ffmpeg
+fi
+if [[ "${V_CREATOR_SKIP_DEPTH:-0}" != "1" ]]; then
+  echo 'Installing Depth Anything V2 Small (ONNX, Apache-2.0, ~95 MB) for v-creator animate...'
+  .venv/bin/python scripts/install-depth-model.py
+else
+  echo 'WARN: depth model installation explicitly skipped; v-creator animate will refuse to run.' >&2
 fi
 if command -v npm >/dev/null && command -v node >/dev/null; then
   npm ci --no-audit --no-fund

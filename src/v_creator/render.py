@@ -11,11 +11,13 @@ import subprocess
 from typing import Any
 
 import imageio_ffmpeg
+from PIL import Image
 
 from . import __version__
 from .audio import generate_midi, generate_music, generate_sfx
+from . import depth, parallax
 from .spec import Project, Scene, SpecError
-from .visuals import FONTS, make_plate
+from .visuals import FONTS, make_overlay, make_plate
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -56,16 +58,22 @@ def _digest(path: Path) -> str:
     return h.hexdigest()
 
 
-def _hash_scene(scene: Scene, project: Project, resolution: tuple[int, int], preview: bool) -> str:
+def _hash_scene(scene: Scene, project: Project, resolution: tuple[int, int], preview: bool, *,
+                motion: str = "kenburns", strength: float = 1.0, clean: bool = False) -> str:
     data = {
         "scene": {"id": scene.id, "title": scene.title, "caption": scene.caption,
-                  "visual": scene.visual, "duration": scene.duration, "transition": scene.transition},
+                  "visual": scene.visual, "duration": scene.duration, "transition": scene.transition,
+                  "camera": scene.camera},
         "image_sha256": _digest(scene.image) if scene.image else None,
-        "code_sha256": [_digest(Path(__file__)), _digest(ROOT / "src/v_creator/visuals.py")],
+        "code_sha256": [_digest(Path(__file__)), _digest(ROOT / "src/v_creator/visuals.py"),
+                        _digest(ROOT / "src/v_creator/parallax.py"), _digest(ROOT / "src/v_creator/depth.py")],
         "font_sha256": [_digest(FONTS / "NotoKufiArabic.ttf"), _digest(FONTS / "NotoSansArabic.ttf")],
         "resolution": resolution, "fps": project.fps, "seed": project.seed,
         "preview": preview, "ffmpeg": ffmpeg(), "version": __version__,
+        "motion": motion, "strength": strength, "clean": clean,
     }
+    if motion == "depth":
+        data["depth_model_sha256"] = depth.MODEL_SHA256
     return hashlib.sha256(json.dumps(data, sort_keys=True, ensure_ascii=False).encode("utf-8")).hexdigest()[:20]
 
 
@@ -87,24 +95,44 @@ def write_subtitles(project: Project, path: Path) -> None:
 
 
 def _clip(scene: Scene, project: Project, n: int, width: int, height: int, cache: Path, preview: bool,
-          log: Path) -> tuple[Path, Path, bool]:
-    digest = _hash_scene(scene, project, (width, height), preview)
+          log: Path, *, motion: str = "kenburns", strength: float = 1.0, clean: bool = False,
+          estimator: "depth.DepthEstimator | None" = None) -> tuple[Path, Path, bool]:
+    digest = _hash_scene(scene, project, (width, height), preview,
+                         motion=motion, strength=strength, clean=clean)
     plate = cache / f"scene_{n:02}_{scene.id}_{digest}.png"
     video = cache / f"scene_{n:02}_{scene.id}_{digest}.mp4"
     if video.is_file() and video.stat().st_size > 1000:
         return plate, video, True
-    if not plate.exists():
-        make_plate(scene, plate, width, height, project.seed + n * 7919, n)
     duration = scene.duration
     count = round(duration * project.fps)
     if abs(count / project.fps - duration) > 0.001:
         raise SpecError(f"{scene.id}: duration must be a whole number of frames at {project.fps} fps")
-    fade = min(0.22, duration / 7)
+    fade = min(0.22, duration / 7) if scene.transition == "fade" else None
+    if motion == "depth" and scene.image is not None:
+        if not depth.model_is_installed():
+            raise SpecError("The depth camera move needs the local depth model; run "
+                            "./scripts/install.sh (or .venv/bin/python scripts/install-depth-model.py). "
+                            "Pass --motion kenburns to render without it.")
+        overlay = None if clean else cache / f"overlay_{n:02}_{scene.id}_{digest}.png"
+        if overlay is not None and not overlay.exists():
+            make_overlay(scene, width, height, n, darken_image=True).save(overlay, optimize=True)
+        dmap, _, _ = depth.cached_depth(scene.image, cache / "depth", estimator=estimator)
+        with Image.open(scene.image) as source:
+            base, small = parallax.fit_image_and_depth(source.convert("RGB"), dmap, width, height)
+        camera = parallax.resolve_camera(scene.camera, n)
+        parallax.encode_clip(
+            parallax.frames(base, small, camera, count, strength=strength),
+            width=width, height=height, fps=project.fps, count=count, out=video,
+            ffmpeg=ffmpeg(), overlay=overlay, fade=fade, duration=duration,
+            preview=preview, log=log)
+        return plate, video, False
+    if not plate.exists():
+        make_plate(scene, plate, width, height, project.seed + n * 7919, n)
     # zoompan evaluates the expression once per frame, regardless of source still size.
     zoom = ("zoompan=z='min(zoom+0.00045,1.095)':x='(iw-iw/zoom)/2':"
             f"y='(ih-ih/zoom)/2':d=1:s={width}x{height}:fps={project.fps}")
     filters = [zoom, "format=yuv420p"]
-    if scene.transition == "fade":
+    if fade:
         filters += [f"fade=t=in:st=0:d={fade:.3f}",
                     f"fade=t=out:st={max(0, duration-fade):.3f}:d={fade:.3f}"]
     _run([ffmpeg(), "-hide_banner", "-loglevel", "error", "-y",
@@ -192,7 +220,8 @@ def validate(path: Path, project: Project, *, decode: bool = True) -> dict:
 
 
 def render(project: Project, out_dir: Path, *, preview: bool = True,
-           narrator_override: Path | None = None) -> dict:
+           narrator_override: Path | None = None, motion: str = "kenburns",
+           strength: float = 1.0, clean: bool = False) -> dict:
     narrator = narrator_override or project.narration_path
     if narrator and not narrator.is_file():
         if preview:
@@ -239,16 +268,26 @@ def render(project: Project, out_dir: Path, *, preview: bool = True,
     records = []
     clips = []
     cursor = 0.0
+    estimator = depth.DepthEstimator() if motion == "depth" and depth.model_is_installed() else None
     for n, scene in enumerate(project.scenes, 1):
-        plate, clip, hit = _clip(scene, project, n, width, height, cache, preview, log)
+        plate, clip, hit = _clip(scene, project, n, width, height, cache, preview, log,
+                                 motion=motion, strength=strength, clean=clean, estimator=estimator)
         clips.append(clip)
-        records.append({"id": scene.id, "title": scene.title, "start": cursor,
-                        "duration": scene.duration, "selected_tool": "Pillow + FFmpeg",
-                        "selection_reason": "Original/owned image plate with a CPU Ken Burns camera move",
-                        "image": str(scene.image) if scene.image else str(plate),
-                        "image_source": scene.image_source if scene.image else "locally generated",
-                        "image_license": scene.image_license if scene.image else "original/generated",
-                        "cache_hit": hit})
+        moved = motion == "depth" and scene.image is not None
+        records.append({
+            "id": scene.id, "title": scene.title, "start": cursor,
+            "duration": scene.duration,
+            "selected_tool": ("Depth Anything V2 Small (ONNX) + OpenCV parallax + FFmpeg" if moved
+                              else "Pillow + FFmpeg"),
+            "selection_reason": ("Single still + monocular depth map -> 2.5D CPU camera move" if moved
+                                 else "Original/owned image plate with a CPU Ken Burns camera move"),
+            "motion": ("depth-parallax:" + parallax.resolve_camera(scene.camera, n)) if moved
+                      else "kenburns-zoom",
+            "overlay": "none (clean)" if clean and moved else ("title overlay" if moved else "baked into plate"),
+            "image": str(scene.image) if scene.image else str(plate),
+            "image_source": scene.image_source if scene.image else "locally generated",
+            "image_license": scene.image_license if scene.image else "original/generated",
+            "cache_hit": hit})
         cursor += scene.duration
     concat_file = cache / "clips.txt"
     concat_file.write_text("".join(_concat_path(c) for c in clips), encoding="utf-8")
@@ -292,7 +331,11 @@ def render(project: Project, out_dir: Path, *, preview: bool = True,
             "effects": {"source": str(effects), "license": "original/procedural"},
         },
         "tools": {"v_creator": __version__, "ffmpeg": ffmpeg(),
-                  "ffprobe": ffprobe(), "hyperframes": "separate optional motion backend"},
+                  "ffprobe": ffprobe(), "hyperframes": "separate optional motion backend",
+                  "motion": {"mode": motion, "strength": strength, "clean_overlay": clean},
+                  "depth_model": {"label": depth.MODEL_LABEL, "sha256": depth.MODEL_SHA256,
+                                  "runtime": "onnxruntime (CPU)",
+                                  "installed": depth.model_is_installed()} if motion == "depth" else None},
         "validation": report,
         "note": "Subtitles are timed to scenes, NOT word-aligned to a voiceover. Review Arabic pronunciation and mix by ear before publishing.",
     }
