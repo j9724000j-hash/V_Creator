@@ -2,6 +2,8 @@
   "package": "ghost-hassan-al-saghir",
   "title_ar": "شبح جُبّ حسن الصغير",
   "title_en": "The Ghost of Jubb Hassan Al-Saghir",
+  "base_dir": "FF/images",
+  "path_convention": "all file paths in this manifest are relative to FF/images",
   "source_archive": "FF/ghost_hassan_video_package.zip",
   "source_files": [
     "00_START_HERE_AR.md",
