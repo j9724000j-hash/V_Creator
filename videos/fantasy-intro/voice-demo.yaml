@@ -1,0 +1,41 @@
+# 21-second, voice-friendly timing variant for a LOCAL synthetic-voice test.
+# Draft preview, not a finished fantasy film or a human voice performance.
+video:
+  id: forgotten-gate-voice-demo
+  title: "البوابة المنسيّة — تجربة التعليق"
+  width: 1280
+  height: 720
+  fps: 24
+  seed: 2048
+
+audio:
+  narration:
+    required: true
+    path: private/narration.wav # an independently recorded and reviewed alternative
+  music:
+    mode: procedural
+    mood: mysterious
+    bpm: 72
+
+scenes:
+  - id: the-map
+    duration: 7
+    visual: ruins
+    title: "خريطةٌ لا تعرف الطريق"
+    caption: "حين أطبق الليل جناحيه، وجدت ليلى خريطةً لا تعرف الطريق."
+    narration: "حينَ أَطْبَقَ الليلُ جَناحَيْهِ، وَجَدَتْ لَيْلى خَريطَةً لا تَعْرِفُ الطَّريقَ."
+    transition: fade
+  - id: the-portal
+    duration: 8
+    visual: portal
+    title: "خلفَ البوّابة"
+    caption: "وعند بابٍ من نورٍ أزرق، سمعت اسمها يُنادى من عالمٍ آخر."
+    narration: "وَعِنْدَ بابٍ مِنْ نورٍ أَزْرَقَ، سَمِعَتِ اسْمَها يُنادى مِنْ عالَمٍ آخَرَ."
+    transition: fade
+  - id: the-citadel
+    duration: 6
+    visual: citadel
+    title: "تبدأ الحكاية الآن"
+    caption: "خطت خطوةً واحدة؛ فتغيّرت السماء، وبدأت الحكاية."
+    narration: "خَطَتْ خُطْوَةً واحِدَةً؛ فَتَغَيَّرَتِ السَّماءُ، وَبَدَأَتِ الحِكايَةُ."
+    transition: fade

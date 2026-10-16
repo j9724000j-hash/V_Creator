@@ -1,0 +1,37 @@
+# A short *draft* concept, not the finished fantasy film.
+video:
+  id: forgotten-gate
+  title: "البوابة المنسيّة"
+  width: 1280
+  height: 720
+  fps: 24
+  seed: 2048
+
+audio:
+  narration:
+    required: true
+    path: private/narration.wav # record yourself or generate a consensual natural voice
+  music:
+    mode: procedural
+    mood: mysterious
+    bpm: 72
+
+scenes:
+  - id: the-map
+    duration: 4
+    visual: ruins
+    title: "خريطةٌ لا تعرف الطريق"
+    caption: "حين أطبق الليل جناحيه، وجدت ليلى خريطةً لا تعرف الطريق."
+    transition: fade
+  - id: the-portal
+    duration: 5
+    visual: portal
+    title: "خلفَ البوّابة"
+    caption: "وعند بابٍ من نورٍ أزرق، سمعت اسمها يُنادى من عالمٍ آخر."
+    transition: fade
+  - id: the-citadel
+    duration: 4
+    visual: citadel
+    title: "تبدأ الحكاية الآن"
+    caption: "خطت خطوةً واحدة؛ فتغيّرت السماء، وبدأت الحكاية."
+    transition: fade

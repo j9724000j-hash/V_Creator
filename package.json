@@ -1,0 +1,20 @@
+{
+  "name": "v-creator-studio",
+  "private": true,
+  "version": "0.1.0",
+  "description": "CPU-first cinematic video and Arabic narration prep studio",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "motion:doctor": "hyperframes doctor",
+    "motion:help": "hyperframes --help"
+  },
+  "devDependencies": {
+    "@ffprobe-installer/ffprobe": "2.1.2",
+    "hyperframes": "0.8.163"
+  },
+  "optionalDependencies": {
+    "@sparticuz/chromium": "153.0.0"
+  }
+}

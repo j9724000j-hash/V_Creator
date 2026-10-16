@@ -1,0 +1,36 @@
+# Local environments / models (never commit multi-GB checkpoints or private voices)
+.venv/
+.venv-voice-*/
+.env
+.env.*
+!.env.example
+.cache/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+
+# Browser / package installations
+node_modules/
+.puppeteer-cache/
+# HyperFrames local editor state (not a composition asset)
+**/.hyperframes/
+
+# Media builds and user-supplied assets
+output/
+models/
+checkpoints/
+*.wav
+*.mp3
+*.flac
+*.m4a
+*.mp4
+*.mov
+*.webm
+videos/**/private/
+!assets/fonts/*.ttf
+
+# Editors
+.DS_Store
+*.swp

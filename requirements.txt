@@ -1,0 +1,3 @@
+# The editable package pins the small, CPU-first runtime in pyproject.toml.
+-e .
+pytest==8.4.2
