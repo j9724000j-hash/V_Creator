@@ -1,0 +1,77 @@
+{
+  "output": "/home/user/V_Creator/FF/audios/narration_full_120s.wav",
+  "duration_seconds": 120.0,
+  "sample_rate": 44100,
+  "language": "ar",
+  "scenes": [
+    {
+      "scene": "scene01-old-well",
+      "start_seconds": 0.18,
+      "speech_seconds": 9.16,
+      "scene_seconds": 12.0
+    },
+    {
+      "scene": "scene02-cyan-glow",
+      "start_seconds": 12.18,
+      "speech_seconds": 9.69,
+      "scene_seconds": 12.0
+    },
+    {
+      "scene": "scene03-blue-trace",
+      "start_seconds": 24.18,
+      "speech_seconds": 8.89,
+      "scene_seconds": 12.0
+    },
+    {
+      "scene": "scene04-hassan-appears",
+      "start_seconds": 36.18,
+      "speech_seconds": 10.49,
+      "scene_seconds": 12.0
+    },
+    {
+      "scene": "scene05-question-at-well",
+      "start_seconds": 48.18,
+      "speech_seconds": 5.67,
+      "scene_seconds": 12.0
+    },
+    {
+      "scene": "scene06-blocked-channel",
+      "start_seconds": 60.18,
+      "speech_seconds": 9.99,
+      "scene_seconds": 12.0
+    },
+    {
+      "scene": "scene07-cannot-move-stone",
+      "start_seconds": 72.18,
+      "speech_seconds": 10.1,
+      "scene_seconds": 12.0
+    },
+    {
+      "scene": "scene08-village-bell",
+      "start_seconds": 84.18,
+      "speech_seconds": 9.58,
+      "scene_seconds": 12.0
+    },
+    {
+      "scene": "scene09-water-returns",
+      "start_seconds": 96.18,
+      "speech_seconds": 9.75,
+      "scene_seconds": 12.0
+    },
+    {
+      "scene": "scene10-lantern-at-dawn",
+      "start_seconds": 108.18,
+      "speech_seconds": 11.55,
+      "scene_seconds": 12.0
+    }
+  ],
+  "engine": "sherpa-onnx 1.13.8",
+  "model": "Supertone Supertonic 3 (third-party npm repack)",
+  "weights_license": "OpenRAIL-M",
+  "speaker": 0,
+  "steps": 8,
+  "speed": 1.1731307241511322,
+  "model_install_manifest_sha256": "3457189fba0541cb842ca2302213b31af936c3269cdca0af3c5af0166716ed30",
+  "synthesis_type": "fixed-preset neural synthetic voice; NOT a human performance or voice clone",
+  "review": "Listen for Arabic pronunciation, naturalness and mix before publishing. Check model use restrictions and attribution."
+}
